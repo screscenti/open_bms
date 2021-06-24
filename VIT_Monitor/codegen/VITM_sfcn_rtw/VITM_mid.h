@@ -53,3 +53,43 @@ static int_T FcnSetErrorStatus(const SimStruct *S, DTypeId arg2)
 
 #endif
 
+/* Instance data for model: VITM */
+void *VITM_malloc(SimStruct *rts)
+{
+  /* Local SimStruct for the generated S-Function */
+  LocalS *lS = (LocalS *) malloc(sizeof(LocalS));
+  ss_VALIDATE_MEMORY(rts,lS);
+  (void) memset((char *) lS, 0,
+                sizeof(LocalS));
+  ssSetUserData(rts, lS);
+
+  /* block I/O */
+  {
+    void *b = malloc(sizeof(B_VITM_T));
+    ss_VALIDATE_MEMORY(rts,b);
+    ssSetLocalBlockIO(rts, b);
+    (void) memset(b, 0,
+                  sizeof(B_VITM_T));
+  }
+
+  /* model parameters */
+  ssSetLocalDefaultParam(rts, (real_T *) &VITM_DefaultP);
+
+  /* previous zero-crossing states */
+  {
+    int_T i;
+    ZCSigState *zc = (ZCSigState *) malloc(sizeof(PrevZCX_VITM_T));
+    ss_VALIDATE_MEMORY(rts,zc);
+    _ssSetPrevZCSigState(rts, zc);
+    for (i = 0; i < 9; i++) {
+      zc[i] = UNINITIALIZED_ZCSIG;
+    }
+  }
+
+  /* model checksums */
+  ssSetChecksumVal(rts, 0, 1146590582U);
+  ssSetChecksumVal(rts, 1, 314773117U);
+  ssSetChecksumVal(rts, 2, 334333490U);
+  ssSetChecksumVal(rts, 3, 3649190524U);
+  return (NULL);
+}
