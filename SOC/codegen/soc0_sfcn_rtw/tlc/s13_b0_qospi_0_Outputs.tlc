@@ -1,0 +1,50 @@
+%implements s13_b0_qospi_0_Outputs "C"
+
+%function Outputs(block, system) Output
+%assign cfgTxt = ""
+%openfile cfgTxt
+%assign localVarDecl = ""
+%openfile localVarDecl
+int32_T iU;
+uint32_T bpIdx;
+real_T frac;
+%closefile localVarDecl
+/* Lookup_n-D: '<S6>/OCV - SOC Lookup' */
+for (iU = 0; iU < 40; iU++) {
+    bpIdx = soc0_plook_evenc(rtu_cell_voltages[iU], %<(SLibCGIR_PV(0, 0, 2, 151, "", -1, "", 0))>, %<(SLibCG_SE(SLibCGIR_PV(0, 0, 2, 151, "", -1, "", 1)))> - %<(SLibCG_SE(SLibCGIR_PV(0, 0, 2, 151, "", -1, "", 0)))>, 150U, &frac);
+    rty_soc_cells_pct[iU] = soc0_intrp1d_l(bpIdx, frac, %<(SLibCGIR_PVAddr(1, 0, 2, 151, "", -1, "", 0))>);
+}
+/* End of Lookup_n-D: '<S6>/OCV - SOC Lookup' */
+
+/* Constant: '<S6>/Constant' */
+*rty_cc_integration_reset = 0.0;
+%closefile cfgTxt
+%<cfgTxt>
+%assign rtmArgSys = ::CompiledModel.System[::CompiledModel.System[::CompiledModel.RTWCGModules.RTWCGModule[0].CGSystemIdx].NonInlinedParentSystemIdx]
+%if SysFcnArgNeeded("Output", rtmArgSys.Interface.RTMArgDef, rtmArgSys.CurrentTID, SLibSystemFcnPeriodicRateGrouping(rtmArgSys, "Output"))
+%<SLibCG_AccessArg(0, 0, 0)>
+%endif
+%if SLibCG_ArgAccessed(0, 0, 0)
+%<SLibAccessArg(rtmArgSys.Interface.RTMArgDef, "Output", rtmArgSys.CurrentTID, SLibSystemFcnPeriodicRateGrouping(rtmArgSys, "Output"))>
+%endif
+%if (IsModelReferenceBaseSys(rtmArgSys) && (IsModelRefScalableBuild() || GenerateClassInterface))
+%<SLibCG_UndoAccessArg(0, 0, 0)>
+%endif
+%assign fcnProtoType = ""
+%openfile fcnProtoType
+static void soc0_Init(\
+%assign comma = ""
+%if SLibCG_ArgAccessed(0, 0, 0)
+%<comma>%<tSimStructType> * const %<tSimStruct>\
+%assign comma = ", "
+%endif
+%<comma>const real_T rtu_cell_voltages[40]\
+%assign comma = ", "
+%<comma>real_T rty_soc_cells_pct[40]\
+%assign comma = ", "
+%<comma>real_T *rty_cc_integration_reset\
+%assign comma = ", "
+%closefile fcnProtoType
+%<SLibCG_SetFcnProtoType(0, 0, fcnProtoType)>
+%<LibSetSystemField(system, "CachedOutputLocalVars", localVarDecl)>
+%endfunction

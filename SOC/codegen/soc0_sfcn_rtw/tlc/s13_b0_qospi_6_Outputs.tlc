@@ -1,0 +1,352 @@
+%implements s13_b0_qospi_6_Outputs "C"
+
+%function Outputs(block, system) Output
+%assign cfgTxt = ""
+%openfile cfgTxt
+%assign localVarDecl = ""
+%openfile localVarDecl
+int32_T i;
+B_soc0_T *_rtB;
+%closefile localVarDecl
+%assign _modelSS = ""
+
+%<SLibCG_TrackBlockIO(13)>\
+_rtB = %<(SLibCG_SE(SLibGetBlockIOStructPtr()))>;
+%<SLibCG_TrackEO(6)>\
+%<SLibCG_TrackEI(6)>\
+/* DataStoreRead: '<S8>/Data Store Read2' incorporates:
+ *  DataStoreRead: '<S8>/Data Store Read1'
+ *  DataStoreRead: '<S8>/Data Store Read3'
+ */
+memcpy(&_rtB->DataStoreRead2[0], %<(SLibCG_DWVAddr(4, 0, 13, 40, "", -1, "", 0))>, 40U * sizeof(real_T));
+/* DataStoreRead: '<S8>/Data Store Read1' incorporates:
+ *  DataStoreRead: '<S8>/Data Store Read2'
+ *  DataStoreRead: '<S8>/Data Store Read3'
+ */
+memcpy(&_rtB->DataStoreRead1[0], %<(SLibCG_DWVAddr(3, 0, 13, 40, "", -1, "", 0))>, 40U * sizeof(real_T));
+/* DataStoreRead: '<S8>/Data Store Read3' incorporates:
+ *  DataStoreRead: '<S8>/Data Store Read1'
+ *  DataStoreRead: '<S8>/Data Store Read2'
+ */
+memcpy(&_rtB->DataStoreRead3[0], %<(SLibCG_DWVAddr(6, 0, 13, 40, "", -1, "", 0))>, 40U * sizeof(real_T));
+/* Chart: '<S8>/Chart' incorporates:
+ *  DataStoreRead: '<S8>/Data Store Read'
+ *  Inport: '<Root>/bsc_chg_cc_cmd'
+ *  Inport: '<Root>/cell_voltages'
+ */
+/* Gateway: soc/key_on/Chart */
+/* During: soc/key_on/Chart */
+if (%<(SLibCG_SE(SLibCG_DWV(9, 0, 13, 1, "", -1, "", 0)))> == 0U) {
+    /* Entry: soc/key_on/Chart */
+%<SLibCG_SetDWV(9, 0, 13, 1, "", -1, "", 0, "1U")>\
+    /* Entry Internal: soc/key_on/Chart */
+    /* Transition: '<S10>:2' */
+%<SLibCG_SetDWV(10, 0, 13, 1, "", -1, "", 0, "soc0_IN_keyON")>\
+%assign   Outputs_open_Subsystem_7_5 = ""
+%openfile Outputs_open_Subsystem_7_5
+
+    /* Outputs for Function Call SubSystem: '<S8>/Subsystem' */
+%closefile Outputs_open_Subsystem_7_5
+
+%assign    Outputs_body_Subsystem_7_5 = ""
+%openfile  Outputs_body_Subsystem_7_5
+
+    /* Entry Internal 'keyON': '<S10>:1' */
+    /* Transition: '<S10>:37' */
+    /* Transition: '<S10>:5' */
+    /* Event: '<S10>:33' */
+%if !SLibCGSysFcnIsEmptyForTid(CompiledModel.System[3], "Output",0)
+%if SLibCG_SystemFcnArgAccessed("soc0_Subsystem",3,0)
+%<SLibCG_AccessArg(6 ,2, 0)>
+%endif
+%if SLibCG_SystemFcnArgAccessed("soc0_Subsystem",3,1)
+%<SLibCG_TrackEI(1)>
+%<SLibCG_AccessArg(6 ,2, 0)>
+%endif
+
+%<SLibCGIRGenReusableSysCall("soc0_Subsystem", ["%<tSimStruct>", "((const real_T **)ssGetInputPortSignalPtrs(%<tSimStruct>, 1))[0]", "&_rtB->Subsystem", "%<(SLibCG_DWVAddr(3, 0, 13, 40, "", -1, "", 0))>"], 3, 0, 7, 0, 7, 13)>\
+
+%endif
+%closefile Outputs_body_Subsystem_7_5
+
+%assign    Outputs_close_Subsystem_7_5 = ""
+%openfile  Outputs_close_Subsystem_7_5
+
+    /* End of Outputs for SubSystem: '<S8>/Subsystem' */
+%closefile Outputs_close_Subsystem_7_5
+%<SLibCG_DumpSSCode(Outputs_open_Subsystem_7_5, Outputs_body_Subsystem_7_5, Outputs_close_Subsystem_7_5)>
+
+    if (%<(SLibCG_SE(SLibCG_DWV(5, 0, 13, 1, "", -1, "", 0)))> == 1.0) {
+%assign   Outputs_open_CdegradeCalc_7_6 = ""
+%openfile Outputs_open_CdegradeCalc_7_6
+
+        /* Outputs for Function Call SubSystem: '<S8>/CdegradeCalc' */
+%closefile Outputs_open_CdegradeCalc_7_6
+
+%assign    Outputs_body_CdegradeCalc_7_6 = ""
+%openfile  Outputs_body_CdegradeCalc_7_6
+
+        /* Transition: '<S10>:17' */
+        /* Transition: '<S10>:21' */
+        /* Event: '<S10>:34' */
+%if !SLibCGSysFcnIsEmptyForTid(CompiledModel.System[4], "Output",0)
+%if SLibCG_SystemFcnArgAccessed("soc0_CdegradeCalc",4,0)
+%<SLibCG_AccessArg(6 ,2, 0)>
+%endif
+
+%<SLibCGIRGenReusableSysCall("soc0_CdegradeCalc", ["%<tSimStruct>", "_rtB->Subsystem.OCVSOCLookup", "_rtB->DataStoreRead2", "_rtB->DataStoreRead1", "_rtB->DataStoreRead3", "&_rtB->CdegradeCalc"], 4, 0, 7, 0, 7, 13)>\
+
+%endif
+%closefile Outputs_body_CdegradeCalc_7_6
+
+%assign    Outputs_close_CdegradeCalc_7_6 = ""
+%openfile  Outputs_close_CdegradeCalc_7_6
+
+        /* End of Outputs for SubSystem: '<S8>/CdegradeCalc' */
+%closefile Outputs_close_CdegradeCalc_7_6
+%<SLibCG_DumpSSCode(Outputs_open_CdegradeCalc_7_6, Outputs_body_CdegradeCalc_7_6, Outputs_close_CdegradeCalc_7_6)>
+
+        /* Transition: '<S10>:19' */
+    } else {
+        /* Transition: '<S10>:18' */
+    }
+    /* Transition: '<S10>:20' */
+    if (*((const boolean_T **)ssGetInputPortSignalPtrs(%<tSimStruct>, 6))[0]) {
+%assign   Outputs_open_saveChgInitSoc_7_7 = ""
+%openfile Outputs_open_saveChgInitSoc_7_7
+
+        /* Outputs for Function Call SubSystem: '<S8>/saveChgInitSoc' */
+%closefile Outputs_open_saveChgInitSoc_7_7
+
+%assign    Outputs_body_saveChgInitSoc_7_7 = ""
+%openfile  Outputs_body_saveChgInitSoc_7_7
+
+        /* Transition: '<S10>:9' */
+        /* Transition: '<S10>:11' */
+        /* Event: '<S10>:35' */
+%if !SLibCGSysFcnIsEmptyForTid(CompiledModel.System[5], "Output",0)
+%if SLibCG_SystemFcnArgAccessed("soc0_saveChgInitSoc",5,0)
+%<SLibCG_AccessArg(6 ,2, 0)>
+%endif
+
+%<SLibCGIRGenReusableSysCall("soc0_saveChgInitSoc", ["%<tSimStruct>", "_rtB->Subsystem.OCVSOCLookup", "%<(SLibCG_DWVAddr(4, 0, 13, 40, "", -1, "", 0))>"], 5, 0, 7, 0, 7, 13)>\
+
+%endif
+%closefile Outputs_body_saveChgInitSoc_7_7
+
+%assign    Outputs_close_saveChgInitSoc_7_7 = ""
+%openfile  Outputs_close_saveChgInitSoc_7_7
+
+        /* End of Outputs for SubSystem: '<S8>/saveChgInitSoc' */
+%closefile Outputs_close_saveChgInitSoc_7_7
+%<SLibCG_DumpSSCode(Outputs_open_saveChgInitSoc_7_7, Outputs_body_saveChgInitSoc_7_7, Outputs_close_saveChgInitSoc_7_7)>
+
+        /* Transition: '<S10>:22' */
+    } else {
+        /* Transition: '<S10>:12' */
+    }
+%assign   Outputs_open_lastCycleUpdate_7_8 = ""
+%openfile Outputs_open_lastCycleUpdate_7_8
+
+    /* Outputs for Function Call SubSystem: '<S8>/lastCycleUpdate' */
+%closefile Outputs_open_lastCycleUpdate_7_8
+
+%assign    Outputs_body_lastCycleUpdate_7_8 = ""
+%openfile  Outputs_body_lastCycleUpdate_7_8
+
+    /* Transition: '<S10>:25' */
+    /* Event: '<S10>:36' */
+%if !SLibCGSysFcnIsEmptyForTid(CompiledModel.System[6], "Output",0)
+%if SLibCG_SystemFcnArgAccessed("soc0_lastCycleUpdate",6,0)
+%<SLibCG_AccessArg(6 ,2, 0)>
+%endif
+%if SLibCG_SystemFcnArgAccessed("soc0_lastCycleUpdate",6,1)
+%<SLibCG_TrackEI(6)>
+%<SLibCG_AccessArg(6 ,2, 0)>
+%endif
+
+%<SLibCGIRGenReusableSysCall("soc0_lastCycleUpdate", ["%<tSimStruct>", "*((const boolean_T **)ssGetInputPortSignalPtrs(%<tSimStruct>, 6))[0]", "%<(SLibCG_DWVAddr(5, 0, 13, 1, "", -1, "", 0))>"], 6, 0, 7, 0, 7, 13)>\
+
+%endif
+%closefile Outputs_body_lastCycleUpdate_7_8
+
+%assign    Outputs_close_lastCycleUpdate_7_8 = ""
+%openfile  Outputs_close_lastCycleUpdate_7_8
+
+    /* End of Outputs for SubSystem: '<S8>/lastCycleUpdate' */
+%closefile Outputs_close_lastCycleUpdate_7_8
+%<SLibCG_DumpSSCode(Outputs_open_lastCycleUpdate_7_8, Outputs_body_lastCycleUpdate_7_8, Outputs_close_lastCycleUpdate_7_8)>
+
+} else {
+%assign   Outputs_open_Subsystem_7_5 = ""
+%openfile Outputs_open_Subsystem_7_5
+
+    /* Outputs for Function Call SubSystem: '<S8>/Subsystem' */
+%closefile Outputs_open_Subsystem_7_5
+
+%assign    Outputs_body_Subsystem_7_5 = ""
+%openfile  Outputs_body_Subsystem_7_5
+
+    /* During 'keyON': '<S10>:1' */
+    /* Transition: '<S10>:37' */
+    /* Transition: '<S10>:5' */
+    /* Event: '<S10>:33' */
+%if !SLibCGSysFcnIsEmptyForTid(CompiledModel.System[3], "Output",0)
+%if SLibCG_SystemFcnArgAccessed("soc0_Subsystem",3,0)
+%<SLibCG_AccessArg(6 ,2, 0)>
+%endif
+%if SLibCG_SystemFcnArgAccessed("soc0_Subsystem",3,1)
+%<SLibCG_TrackEI(1)>
+%<SLibCG_AccessArg(6 ,2, 0)>
+%endif
+
+%<SLibCGIRGenReusableSysCall("soc0_Subsystem", ["%<tSimStruct>", "((const real_T **)ssGetInputPortSignalPtrs(%<tSimStruct>, 1))[0]", "&_rtB->Subsystem", "%<(SLibCG_DWVAddr(3, 0, 13, 40, "", -1, "", 0))>"], 3, 0, 7, 0, 7, 13)>\
+
+%endif
+%closefile Outputs_body_Subsystem_7_5
+
+%assign    Outputs_close_Subsystem_7_5 = ""
+%openfile  Outputs_close_Subsystem_7_5
+
+    /* End of Outputs for SubSystem: '<S8>/Subsystem' */
+%closefile Outputs_close_Subsystem_7_5
+%<SLibCG_DumpSSCode(Outputs_open_Subsystem_7_5, Outputs_body_Subsystem_7_5, Outputs_close_Subsystem_7_5)>
+
+    if (%<(SLibCG_SE(SLibCG_DWV(5, 0, 13, 1, "", -1, "", 0)))> == 1.0) {
+%assign   Outputs_open_CdegradeCalc_7_6 = ""
+%openfile Outputs_open_CdegradeCalc_7_6
+
+        /* Outputs for Function Call SubSystem: '<S8>/CdegradeCalc' */
+%closefile Outputs_open_CdegradeCalc_7_6
+
+%assign    Outputs_body_CdegradeCalc_7_6 = ""
+%openfile  Outputs_body_CdegradeCalc_7_6
+
+        /* Transition: '<S10>:17' */
+        /* Transition: '<S10>:21' */
+        /* Event: '<S10>:34' */
+%if !SLibCGSysFcnIsEmptyForTid(CompiledModel.System[4], "Output",0)
+%if SLibCG_SystemFcnArgAccessed("soc0_CdegradeCalc",4,0)
+%<SLibCG_AccessArg(6 ,2, 0)>
+%endif
+
+%<SLibCGIRGenReusableSysCall("soc0_CdegradeCalc", ["%<tSimStruct>", "_rtB->Subsystem.OCVSOCLookup", "_rtB->DataStoreRead2", "_rtB->DataStoreRead1", "_rtB->DataStoreRead3", "&_rtB->CdegradeCalc"], 4, 0, 7, 0, 7, 13)>\
+
+%endif
+%closefile Outputs_body_CdegradeCalc_7_6
+
+%assign    Outputs_close_CdegradeCalc_7_6 = ""
+%openfile  Outputs_close_CdegradeCalc_7_6
+
+        /* End of Outputs for SubSystem: '<S8>/CdegradeCalc' */
+%closefile Outputs_close_CdegradeCalc_7_6
+%<SLibCG_DumpSSCode(Outputs_open_CdegradeCalc_7_6, Outputs_body_CdegradeCalc_7_6, Outputs_close_CdegradeCalc_7_6)>
+
+        /* Transition: '<S10>:19' */
+    } else {
+        /* Transition: '<S10>:18' */
+    }
+    /* Transition: '<S10>:20' */
+    if (*((const boolean_T **)ssGetInputPortSignalPtrs(%<tSimStruct>, 6))[0]) {
+%assign   Outputs_open_saveChgInitSoc_7_7 = ""
+%openfile Outputs_open_saveChgInitSoc_7_7
+
+        /* Outputs for Function Call SubSystem: '<S8>/saveChgInitSoc' */
+%closefile Outputs_open_saveChgInitSoc_7_7
+
+%assign    Outputs_body_saveChgInitSoc_7_7 = ""
+%openfile  Outputs_body_saveChgInitSoc_7_7
+
+        /* Transition: '<S10>:9' */
+        /* Transition: '<S10>:11' */
+        /* Event: '<S10>:35' */
+%if !SLibCGSysFcnIsEmptyForTid(CompiledModel.System[5], "Output",0)
+%if SLibCG_SystemFcnArgAccessed("soc0_saveChgInitSoc",5,0)
+%<SLibCG_AccessArg(6 ,2, 0)>
+%endif
+
+%<SLibCGIRGenReusableSysCall("soc0_saveChgInitSoc", ["%<tSimStruct>", "_rtB->Subsystem.OCVSOCLookup", "%<(SLibCG_DWVAddr(4, 0, 13, 40, "", -1, "", 0))>"], 5, 0, 7, 0, 7, 13)>\
+
+%endif
+%closefile Outputs_body_saveChgInitSoc_7_7
+
+%assign    Outputs_close_saveChgInitSoc_7_7 = ""
+%openfile  Outputs_close_saveChgInitSoc_7_7
+
+        /* End of Outputs for SubSystem: '<S8>/saveChgInitSoc' */
+%closefile Outputs_close_saveChgInitSoc_7_7
+%<SLibCG_DumpSSCode(Outputs_open_saveChgInitSoc_7_7, Outputs_body_saveChgInitSoc_7_7, Outputs_close_saveChgInitSoc_7_7)>
+
+        /* Transition: '<S10>:22' */
+    } else {
+        /* Transition: '<S10>:12' */
+    }
+%assign   Outputs_open_lastCycleUpdate_7_8 = ""
+%openfile Outputs_open_lastCycleUpdate_7_8
+
+    /* Outputs for Function Call SubSystem: '<S8>/lastCycleUpdate' */
+%closefile Outputs_open_lastCycleUpdate_7_8
+
+%assign    Outputs_body_lastCycleUpdate_7_8 = ""
+%openfile  Outputs_body_lastCycleUpdate_7_8
+
+    /* Transition: '<S10>:25' */
+    /* Event: '<S10>:36' */
+%if !SLibCGSysFcnIsEmptyForTid(CompiledModel.System[6], "Output",0)
+%if SLibCG_SystemFcnArgAccessed("soc0_lastCycleUpdate",6,0)
+%<SLibCG_AccessArg(6 ,2, 0)>
+%endif
+%if SLibCG_SystemFcnArgAccessed("soc0_lastCycleUpdate",6,1)
+%<SLibCG_TrackEI(6)>
+%<SLibCG_AccessArg(6 ,2, 0)>
+%endif
+
+%<SLibCGIRGenReusableSysCall("soc0_lastCycleUpdate", ["%<tSimStruct>", "*((const boolean_T **)ssGetInputPortSignalPtrs(%<tSimStruct>, 6))[0]", "%<(SLibCG_DWVAddr(5, 0, 13, 1, "", -1, "", 0))>"], 6, 0, 7, 0, 7, 13)>\
+
+%endif
+%closefile Outputs_body_lastCycleUpdate_7_8
+
+%assign    Outputs_close_lastCycleUpdate_7_8 = ""
+%openfile  Outputs_close_lastCycleUpdate_7_8
+
+    /* End of Outputs for SubSystem: '<S8>/lastCycleUpdate' */
+%closefile Outputs_close_lastCycleUpdate_7_8
+%<SLibCG_DumpSSCode(Outputs_open_lastCycleUpdate_7_8, Outputs_body_lastCycleUpdate_7_8, Outputs_close_lastCycleUpdate_7_8)>
+
+}
+/* End of Chart: '<S8>/Chart' */
+
+/* SignalConversion: '<S8>/OutportBufferForcc_integration_reset' */
+_rtB->Merge1 = _rtB->Subsystem.Switch1;
+for (i = 0; i < 40; i++) {
+    /* SignalConversion: '<S8>/OutportBufferForcapacity_degrade_factor' */
+    _rtB->OutportBufferForcapacity_degrad[i] = _rtB->CdegradeCalc.Sum[i];
+    /* SignalConversion: '<S8>/OutportBufferForsoc_cells_pct' */
+    _rtB->Merge2[i] = _rtB->Subsystem.Switch[i];
+    /* Outport: '<Root>/soc_C_factor' incorporates:
+ *  Outport: '<S8>/capacity_degrade_factor'
+ */
+    ((real_T *)ssGetOutputPortSignal(%<tSimStruct>, 6))[i] = _rtB->OutportBufferForcapacity_degrad[i];
+}
+%closefile cfgTxt
+%<cfgTxt>
+%assign rtmArgSys = ::CompiledModel.System[::CompiledModel.System[::CompiledModel.RTWCGModules.RTWCGModule[6].CGSystemIdx].NonInlinedParentSystemIdx]
+%if SysFcnArgNeeded("Output", rtmArgSys.Interface.RTMArgDef, rtmArgSys.CurrentTID, SLibSystemFcnPeriodicRateGrouping(rtmArgSys, "Output"))
+%<SLibCG_AccessArg(6, 2, 0)>
+%endif
+%if SLibCG_ArgAccessed(6, 2, 0)
+%<SLibAccessArg(rtmArgSys.Interface.RTMArgDef, "Output", rtmArgSys.CurrentTID, SLibSystemFcnPeriodicRateGrouping(rtmArgSys, "Output"))>
+%endif
+%if (IsModelReferenceBaseSys(rtmArgSys) && (IsModelRefScalableBuild() || GenerateClassInterface))
+%<SLibCG_UndoAccessArg(6, 2, 0)>
+%endif
+%assign fcnProtoType = ""
+%openfile fcnProtoType
+static void soc0_key_on(\
+%assign comma = ""
+%<comma>%<tSimStructType> * const %<tSimStruct>\
+%assign comma = ", "
+%closefile fcnProtoType
+%<SLibCG_SetFcnProtoType(6, 2, fcnProtoType)>
+%<LibSetSystemField(system, "CachedOutputLocalVars", localVarDecl)>
+%endfunction

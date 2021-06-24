@@ -1,0 +1,101 @@
+%implements s13_b0_qospi_5_Outputs "C"
+
+%function Outputs(block, system) Output
+%assign cfgTxt = ""
+%openfile cfgTxt
+%assign localVarDecl = ""
+%openfile localVarDecl
+real_T rtb_mul1[40];
+int32_T i;
+real_T DiscreteTimeIntegrator;
+%closefile localVarDecl
+/* Product: '<S3>/mul1' incorporates:
+ *  Constant: '<S3>/Constant'
+ *  Constant: '<S3>/Constant4'
+ *  Constant: '<S3>/Constant5'
+ *  Constant: '<S3>/Constant7'
+ *  DataTypeConversion: '<S3>/Data Type Conversion'
+ *  Product: '<S3>/Divide'
+ *  Product: '<S3>/Divide1'
+ *  Product: '<S3>/Divide2'
+ *  Product: '<S3>/Divide3'
+ *  Product: '<S3>/Divide4'
+ *  Product: '<S3>/mul'
+ *  Sum: '<S3>/Sum'
+ */
+for (i = 0; i < 40; i++) {
+    rtb_mul1[i] = (rtu_pack_current - rtu_cell_voltages[i] * (real_T)rtu_cb_cmds[i] / %<(SLibCG_SE(SLibCGIR_PV(3, 0, 9, 1, "", -1, "", 0)))>) / (%<(SLibCG_SE(SLibCGIR_PV(4, 0, 9, 1, "", -1, "", 0)))> * rtu_soh_C_factor[i]) / %<(SLibCG_SE(SLibCGIR_PV(5, 0, 9, 1, "", -1, "", 0)))> * %<(SLibCG_SE(SLibCGIR_PV(11, 0, 9, 1, "", -1, "", 0)))>;
+}
+/* End of Product: '<S3>/mul1' */
+
+/* DiscreteIntegrator: '<S3>/Discrete-Time Integrator' */
+if (%<(SLibCG_SE(SLibCG_DWV(13, 0, 9, 1, "", -1, "", 0)))> != 0) {
+    memcpy(%<(SLibCG_DWVAddr(11, 0, 9, 40, "", -1, "", 0))>, &rtu_integration_initial_soc[0], 40U * sizeof(real_T));
+}
+/* Constant: '<S3>/Constant2' */
+*rty_cc_integration_reset = 0.0;
+/* Update for DiscreteIntegrator: '<S3>/Discrete-Time Integrator' */
+%<SLibCG_SetDWV(13, 0, 9, 1, "", -1, "", 0, "0U")>\
+for (i = 0; i < 40; i++) {
+    /* DiscreteIntegrator: '<S3>/Discrete-Time Integrator' */
+    if ((rtu_integration_reset > 0.0) && (%<(SLibCG_SE(SLibCG_DWV(12, 0, 9, 1, "", -1, "", 0)))> <= 0)) {
+%<SLibCG_SetDWV(11, 0, 9, 40, "", -1, "i", 0, "rtu_integration_initial_soc[i]")>\
+    }
+    DiscreteTimeIntegrator = 0.5 * rtb_mul1[i] + %<(SLibCG_SE(SLibCG_DWV(11, 0, 9, 40, "", -1, "i", 0)))>;
+    /* Product: '<S3>/Product' incorporates:
+ *  Constant: '<S3>/Constant1'
+ */
+    rty_soc_cells_pct[i] = DiscreteTimeIntegrator * %<(SLibCG_SE(SLibCGIR_PV(10, 0, 9, 1, "", -1, "", 0)))>;
+    /* Update for DiscreteIntegrator: '<S3>/Discrete-Time Integrator' */
+%<SLibCG_SetDWV(11, 0, 9, 40, "", -1, "i", 0, "0.5 * rtb_mul1[i] + DiscreteTimeIntegrator")>\
+}
+/* Update for DiscreteIntegrator: '<S3>/Discrete-Time Integrator' */
+if (rtu_integration_reset > 0.0) {
+%<SLibCG_SetDWV(12, 0, 9, 1, "", -1, "", 0, "1")>\
+} else if (rtu_integration_reset < 0.0) {
+%<SLibCG_SetDWV(12, 0, 9, 1, "", -1, "", 0, "-1")>\
+} else if (rtu_integration_reset == 0.0) {
+%<SLibCG_SetDWV(12, 0, 9, 1, "", -1, "", 0, "0")>\
+} else {
+%<SLibCG_SetDWV(12, 0, 9, 1, "", -1, "", 0, "2")>\
+}
+%closefile cfgTxt
+%<cfgTxt>
+%assign rtmArgSys = ::CompiledModel.System[::CompiledModel.System[::CompiledModel.RTWCGModules.RTWCGModule[5].CGSystemIdx].NonInlinedParentSystemIdx]
+%if SysFcnArgNeeded("Output", rtmArgSys.Interface.RTMArgDef, rtmArgSys.CurrentTID, SLibSystemFcnPeriodicRateGrouping(rtmArgSys, "Output"))
+%<SLibCG_AccessArg(5, 1, 0)>
+%endif
+%if SLibCG_ArgAccessed(5, 1, 0)
+%<SLibAccessArg(rtmArgSys.Interface.RTMArgDef, "Output", rtmArgSys.CurrentTID, SLibSystemFcnPeriodicRateGrouping(rtmArgSys, "Output"))>
+%endif
+%if (IsModelReferenceBaseSys(rtmArgSys) && (IsModelRefScalableBuild() || GenerateClassInterface))
+%<SLibCG_UndoAccessArg(5, 1, 0)>
+%endif
+%assign fcnProtoType = ""
+%openfile fcnProtoType
+static void soc0_CC_counting(\
+%assign comma = ""
+%if SLibCG_ArgAccessed(5, 1, 0)
+%<comma>%<tSimStructType> * const %<tSimStruct>\
+%assign comma = ", "
+%endif
+%<comma>real_T rtu_pack_current\
+%assign comma = ", "
+%<comma>const real_T rtu_soh_C_factor[40]\
+%assign comma = ", "
+%<comma>const real_T rtu_cell_voltages[40]\
+%assign comma = ", "
+%<comma>const boolean_T rtu_cb_cmds[40]\
+%assign comma = ", "
+%<comma>const real_T rtu_integration_initial_soc[40]\
+%assign comma = ", "
+%<comma>real_T rtu_integration_reset\
+%assign comma = ", "
+%<comma>real_T rty_soc_cells_pct[40]\
+%assign comma = ", "
+%<comma>real_T *rty_cc_integration_reset\
+%assign comma = ", "
+%closefile fcnProtoType
+%<SLibCG_SetFcnProtoType(5, 1, fcnProtoType)>
+%<LibSetSystemField(system, "CachedOutputLocalVars", localVarDecl)>
+%endfunction

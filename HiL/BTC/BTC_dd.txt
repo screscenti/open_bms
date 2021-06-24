@@ -1,0 +1,14 @@
+Name	Value	Units	Type	Accuracy	Min	Max	DeclFile	DefnFile	Description
+btck_stepSize	0.1	s	real_T	0.01					
+btcc_Kp	2	none	real_T	0.01	0	50			Kp for PI to control fan cmd
+btcc_Ki	0.5	none	real_T	0.01	0	50			Ki for PI to control fan cmd
+btcc_min_temp_highth	25	C	real_T	0.5	0	50			minimum battery temperature high threshold
+btcc_min_temp_lowth	20	C	real_T	0.5	0	50			minimum battery temperature low threshold
+btcc_max_temp_lowth	35	C	real_T	0.5	0	50			maximum battery temperature low threshold
+btcc_max_temp_highth	40	C	real_T	0.5	0	50			maximum battery temperature high threshold
+btcc_cell_temp_diffth	5	C	real_T	0.5	0	50			maximum allowable temperature difference between cells
+btcc_number_in_series	40	C	real_T	1	0	50			Number of logical cells wired in series in the battery pack
+btcc_pack_in_parallel	1	none	real_T	1	0	1			Number of logical cells wired in parallel in the battery pack
+btcc_ambient_temp_highth	45	C	real_T	0.5	0	50			ambient high temperature threshold
+btcc_ambient_temp_lowth	-30	C	real_T	0.5	-50	0			ambient low temperature threshold
+btcc_full_soc	95	none	real_T	1	0	120			 Minimum voltage before damage to battery pack. 

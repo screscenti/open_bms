@@ -1,0 +1,103 @@
+  BTC_init;
+  %% Initialize input signals
+  sim_time  = 10;
+  run_time = 0:0.01:sim_time;
+  sig_len = length(run_time);
+  cell_num = btcc_number_in_series * btcc_pack_in_parallel;
+  
+  %% Initialize input signals
+  BTC_Input_CellT.time = run_time';
+  BTC_Input_CellT.signals.dimensions = cell_num;
+  BTC_Input_CellSOC.time = run_time';
+  BTC_Input_CellSOC.signals.dimensions = cell_num;
+  BTC_Input_ChgStatus.time = run_time';
+  BTC_Input_ChgStatus.signals.dimensions = 1;
+  BTC_Input_AmbTmep.time = run_time';
+  BTC_Input_AmbTmep.signals.dimensions = 1;
+  BTC_Input_DisChgStatus.time = run_time';
+  BTC_Input_DisChgStatus.signals.dimensions = 1;
+  BTC_Input_Faults.time = run_time';
+  BTC_Input_Faults.signals.dimensions = 4;
+  
+  %% Choose test cases based on user input number
+ user_choice = ['Please choose the test case number you want to run (1-9) :\n'];
+
+ choice = input(user_choice);
+
+ switch choice
+     case 1
+         % make all cell temp between 30 to 35 deg C
+         BTC_Input_CellT.signals.values =30+(35-30)*rand( sig_len,cell_num); 
+         %  make all SOC  between 60 to 62 deg C
+         BTC_Input_CellSOC.signals.values =  60+(62-60)*rand( sig_len,cell_num); 
+         BTC_Input_ChgStatus.signals.values = boolean(zeros(sig_len,1));
+         BTC_Input_AmbTmep.signals.values = 25*ones(sig_len,1);
+         BTC_Input_DisChgStatus.signals.values = boolean(zeros(sig_len,1));
+         BTC_Input_Faults.signals.values = boolean(zeros(sig_len,4));
+         sim('BTC_OL_Harness.slx');
+         save('test_data/test_1.mat');
+         
+     case 2
+           % make all cell temp between 30 to 35 deg C
+         BTC_Input_CellT.signals.values =30+(35-30)*rand( sig_len,cell_num); 
+         %set one cell temperature is greater than maximum temperature high
+         %threshold
+          BTC_Input_CellT.signals.values(201:1:300,3) = 43*ones(100,1);
+          %set one cell temperature is less than minimum temperature
+          %low threshold
+           BTC_Input_CellT.signals.values(301:1:400,5) = 16*ones(100,1);
+           
+           %set two cell temperature difference is greater than threshold
+           BTC_Input_CellT.signals.values(501:1:600,5) = 26*ones(100,1);
+           
+         
+         %  make all SOC  between 60 to 62 percent
+         BTC_Input_CellSOC.signals.values =  60+(62-60)*rand( sig_len,cell_num); 
+         BTC_Input_ChgStatus.signals.values = boolean(zeros(sig_len,1));
+         BTC_Input_AmbTmep.signals.values = 25*ones(sig_len,1);
+         %determine discharge status
+         BTC_Input_DisChgStatus.signals.values = boolean(ones(sig_len,1));
+         BTC_Input_Faults.signals.values = boolean(zeros(sig_len,4));
+         sim('BTC_OL_Harness.slx');
+         save  save('test_data/test_2.mat')
+     case 3
+         % make all cell temp between 30 to 35 deg C
+         BTC_Input_CellT.signals.values =30+(35-30)*rand( sig_len,cell_num); 
+         BTC_Input_CellT.signals.values(:,1)=45*ones( sig_len,1); 
+         %  make all SOC  between 60 to 62 deg C
+         BTC_Input_CellSOC.signals.values =  60+(62-60)*rand( sig_len,cell_num); 
+         BTC_Input_ChgStatus.signals.values = boolean(zeros(sig_len,1));
+         BTC_Input_AmbTmep.signals.values = 25*ones(sig_len,1);
+         BTC_Input_DisChgStatus.signals.values =  boolean([ones(500,1);zeros(sig_len-500,1)]);
+         BTC_Input_Faults.signals.values = boolean(zeros(sig_len,4));
+         sim('BTC_OL_Harness.slx');
+         save save('test_data/test_3.mat');
+      case 4
+         % make all cell temp between 30 to 35 deg C
+         BTC_Input_CellT.signals.values =30+(35-30)*rand( sig_len,cell_num); 
+         BTC_Input_CellT.signals.values(:,1)=45*ones( sig_len,1); 
+         %  make all SOC  between 60 to 62 deg C
+         BTC_Input_CellSOC.signals.values =  60+(62-60)*rand( sig_len,cell_num); 
+         BTC_Input_ChgStatus.signals.values = boolean(zeros(sig_len,1));
+         BTC_Input_AmbTmep.signals.values = 25*ones(sig_len,1);
+         BTC_Input_DisChgStatus.signals.values =  boolean([ones(500,1);zeros(sig_len-500,1)]);
+         BTC_Input_Faults.signals.values = boolean(zeros(sig_len,4));
+         sim('BTC_OL_Harness.slx');
+         save save('test_data/test_4.mat');
+     case 5
+         % make all cell temp between 30 to 35 deg C
+         BTC_Input_CellT.signals.values =30+(35-30)*rand( sig_len,cell_num); 
+         BTC_Input_CellT.signals.values(:,1)=45*ones( sig_len,1); 
+         %  make all SOC  between 60 to 62 deg C
+         BTC_Input_CellSOC.signals.values =  60+(62-60)*rand( sig_len,cell_num); 
+         BTC_Input_ChgStatus.signals.values = boolean(zeros(sig_len,1));
+         BTC_Input_AmbTmep.signals.values = 25*ones(sig_len,1);
+         BTC_Input_DisChgStatus.signals.values =  boolean([ones(500,1);zeros(sig_len-500,1)]);
+         BTC_Input_Faults.signals.values = boolean(zeros(sig_len,4));
+         BTC_Input_Faults.signals.values(201:1:300,1) = 
+         sim('BTC_OL_Harness.slx');
+         save save('test_data/test_5.mat');
+ end
+ 
+ 
+

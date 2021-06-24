@@ -1,0 +1,74 @@
+VERSION "created by canmatrix"
+
+
+NS_ :
+
+BS_:
+
+BU_: SlaveOutput MasterOutput 
+
+
+BO_ 2 soc_info: 8 MasterOutput
+ SG_ soc_customer : 7|16@0+ (0.01,0) [0|100] "pct" Vector__XXX
+ SG_ soc_pack_actual : 23|16@0+ (0.01,0) [0|100] "pct" Vector__XXX
+ SG_ soc_min : 39|16@0+ (0.01,0) [0|100] "pct" Vector__XXX
+ SG_ soc_max : 55|16@0+ (0.01,0) [0|100] "pct" Vector__XXX
+
+BO_ 3 bsc_info: 8 MasterOutput
+ SG_ bsc_reason_to_open : 7|8@0+ (1,0) [0|20] "state" Vector__XXX
+ SG_ bsc_fault_type : 15|8@0+ (1,0) [0|20] "state" Vector__XXX
+ SG_ bsc_sleep_status : 23|1@0+ (1,0) [0|1] "state" Vector__XXX
+
+BO_ 4 bmo_info: 8 MasterOutput
+ SG_ bmo_mode : 7|8@0+ (1,0) [0|10] "state" Vector__XXX
+ SG_ soc_rate_high : 15|1@0+ (1,0) [0|1] "state" Vector__XXX
+
+BO_ 5 vit_info1: 8 MasterOutput
+ SG_ vit_cells_max_temp : 7|16@0- (0.01,0) [-100|120] "C" Vector__XXX
+ SG_ vit_cells_min_temp : 23|16@0- (0.01,0) [-100|120] "C" Vector__XXX
+ SG_ vit_cells_avg_temp : 39|16@0- (0.01,0) [-100|120] "C" Vector__XXX
+ SG_ vit_cells_max_voltage : 55|16@0+ (0.01,0) [0|5] "V" Vector__XXX
+
+BO_ 6 vit_info2: 8 MasterOutput
+ SG_ vit_cells_min_voltage : 7|16@0+ (0.01,0) [0|5] "V" Vector__XXX
+ SG_ vit_cells_avg_voltage : 23|16@0+ (0.01,0) [0|5] "V" Vector__XXX
+ SG_ vit_pack_voltage : 39|16@0+ (0.01,0) [0|200] "V" Vector__XXX
+ SG_ vit_pack_current : 55|16@0- (0.01,0) [-300|300] "A" Vector__XXX
+
+BO_ 7 btc_info: 8 MasterOutput
+ SG_ btc_coolant_request_status : 7|1@0+ (1,0) [0|1] "state" Vector__XXX
+ SG_ btc_batt_thermal_condition : 6|1@0+ (1,0) [0|1] "state" Vector__XXX
+ SG_ btc_batt_actual_temp : 15|16@0- (0.5,0) [-50|80] "C" Vector__XXX
+ SG_ btc_coolant_flow_percent : 31|8@0+ (1,0) [0|100] "state" Vector__XXX
+ SG_ btc_batt_target_temp : 39|16@0- (0.5,0) [-50|80] "C" Vector__XXX
+
+BO_ 8 soh_info: 8 MasterOutput
+ SG_ soh_index : 7|16@0+ (0.01,0) [0|100] "pct" Vector__XXX
+ SG_ sohr_index : 23|16@0+ (0.01,0) [0|100] "pct" Vector__XXX
+ SG_ sohc_index : 39|16@0+ (0.01,0) [0|100] "pct" Vector__XXX
+
+BO_ 9 sop_info: 8 MasterOutput
+ SG_ sop_batt_pw_lim_charge : 7|16@0+ (4,0) [0|256000] "W" Vector__XXX
+ SG_ sop_batt_pw_lim_discharge : 23|16@0+ (4,0) [0|256000] "W" Vector__XXX
+ SG_ sop_batt_curr_lim_charge : 39|16@0+ (0.05,0) [0|512] "A" Vector__XXX
+ SG_ sop_batt_curr_lim_discharge : 55|16@0+ (0.05,0) [0|512] "A" Vector__XXX
+
+BO_ 16 cb_info: 8 MasterOutput
+ SG_ cb_status : 7|1@0+ (1,0) [0|1] "state" Vector__XXX
+
+BO_ 17 socket_charging_contactor: 8 MasterOutput
+ SG_ charger_contactor : 7|1@0+ (1,0) [0|1] "state" Vector__XXX
+
+
+
+
+
+BA_DEF_ BO_ "GenMsgCycleTimeActive" INT 0 65535;
+BA_DEF_ BO_ "GenMsgDelayTime" INT 0 65535;
+BA_DEF_ BO_ "GenMsgNrOfRepetitions" INT 0 65535;
+BA_DEF_ BO_ "GenMsgSendType" ENUM;
+BA_DEF_ SG_ "GenSigSNA" STRING;
+
+
+
+

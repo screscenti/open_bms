@@ -1,0 +1,17 @@
+Name	Value	Units	Type	Accuracy	Min	Max	DeclFile	DefnFile	Description
+BMS_RawPackVoltage		V	real_T	0.001					Raw Pack Voltage
+BMS_RawPackCurrent		A	real_T	0.001					Raw Pack Current
+BMS_RawVehSideVoltage		V	real_T	0.001					Raw Vehicle Side Voltage
+BMS_CellVoltage		V	real_T	0.001					Cell1 Voltage
+BMS_CellTemp		C	real_T	0.001					Cell1 Temperature
+BMS_MedFault		state	real_T	1					
+soh_R_index		pct	real_T	0.001	0	100			
+soh_C_index		pct	real_T	0.001	0	100			
+btc_coolant_flow_pct		pct	real_T	0.1					
+BMS_error		state	boolean	1					
+BMS_trig		state	boolean	1					
+BMS_overrun		state	uint8_T	1	0	255			
+**									
+BMSk_stepSize	0.1	s	real_T	0.01					
+BMSc_airTemperature	35	C	real_T	0.1	10	40			
+BMSc_cabinTemperature	25	C	real_T	0.1	10	40			

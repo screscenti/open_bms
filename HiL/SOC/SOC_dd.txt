@@ -1,0 +1,15 @@
+Name	Value	Units	Type	Accuracy	Min	Max	DeclFile	DefnFile	Description
+soc_pack_actual	0	pct	real_T	0.01	0	100			Actual SOC
+**									
+SOCk_stepSize	0.1	s	real_T	0.01					
+SOCk_CellCapacity	8	Ah	real_T	1					
+SOCk_HrsToSec	3600	none	real_T	1					
+SOCk_ToPercentage	100	none	real_T	1					
+SOCk_ToFractionFromPercentage	0.01	none	real_T	0.01					
+SOCk_SocMinPercentage	20	pct	real_T	1	0	100			
+SOCk_SocMaxPercentage	80	pct	real_T	1	0	100			
+SOCk_NumberInSeries	40	none	real_T	1					
+SOCv_InitalSOC	[0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]	pct	real_T	1					
+SOCc_CapacityFilterCoeff	0	none	real_T	0.0001	0	1			
+SOCk_CellBalancingResistor	1.1	ohm	real_T	0.01					
+SOCv_factoryInitSohC	[1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1]	none	real_T	0.001					

@@ -1,0 +1,19 @@
+Name	Value	Units	Type	Accuracy	Min	Max	DeclFile	DefnFile	Description
+bsc_VehiclePSR		state	uint8_T	1	0	1			Vehicle PSR signal
+bsc_MainContactorCmd		state	bool	1	0	1			Main contactor cmd
+bsc_ChgContactorCmd		state	bool	1	0	1			Charger contactor cmd
+bsc_FaultType		state	uint8_T	1	0	11			Fault Type
+bsc_KeyValue		state	uint8_T	1	0	1			Key Value
+bsc_ChargerValue		state	uint8_T	1	0	1			Charger Signal
+bsc_ReasonToOpen		state	uint8_T	1	0	11			Main contactor cmd
+**									
+bsck_stepSize	0.1	s	real_T	0.01					
+bsck_TempMaxLimit	45	C	real_T	0.1	-30	55			
+bsck_TempMinLimit	-25	C	real_T	0.1	-30	55			
+bsck_CellMinVolt	2.7	V	real_T	0.1	2	4.3			
+bsck_CellMaxVolt	4.2	V	real_T	0.1	2	4.3			
+bscv_SevereFaultType	[1]	state	uint8_T	1					
+bscv_MediumFaultType	[2 10 11]	state	uint8_T	1					
+bscv_LowFaultType	[3 4 5 6 7 8 9]	state	uint8_T	1					
+bsck_MainContactorInitCond	0	state	real_T	1	0	1			
+bsck_ChargerContactorInitCond	0	state	real_T	1	0	1			

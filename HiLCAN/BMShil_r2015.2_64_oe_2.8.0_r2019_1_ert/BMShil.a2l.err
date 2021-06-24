@@ -1,0 +1,11 @@
+(capi.py): OpenECU interface tool (version 2.8.0 (r2019-1), built 15-Jan-2019)
+(capi.py): (warning 5001): the DDE 'BMSc_cabinTemperature' is not defined by 'BMShil.elf.objdump' and may be redundant, consider removing from DD file.
+(capi.py): (warning 5001): the DDE 'cblc_voltThreshBalance' is not defined by 'BMShil.elf.objdump' and may be redundant, consider removing from DD file.
+(capi.py): (warning 3010): file 'BMShil_tool_generic.a2l': DDE 'BMSc_cabinTemperature' is not defined by 'BMShil.elf.objdump' but is required for ASAP2 generation, DDE not added to ASAP2 file.
+(capi.py): (warning 3010): file 'BMShil_tool_generic.a2l': DDE 'cblc_voltThreshBalance' is not defined by 'BMShil.elf.objdump' but is required for ASAP2 generation, DDE not added to ASAP2 file.
+(capi.py): (warning 3010): file 'BMShil_tool_inca.a2l': DDE 'BMSc_cabinTemperature' is not defined by 'BMShil.elf.objdump' but is required for ASAP2 generation, DDE not added to ASAP2 file.
+(capi.py): (warning 3010): file 'BMShil_tool_inca.a2l': DDE 'cblc_voltThreshBalance' is not defined by 'BMShil.elf.objdump' but is required for ASAP2 generation, DDE not added to ASAP2 file.
+(capi.py): (warning 3010): file 'BMShil_tool_vision.a2l': DDE 'BMSc_cabinTemperature' is not defined by 'BMShil.elf.objdump' but is required for ASAP2 generation, DDE not added to ASAP2 file.
+(capi.py): (warning 3010): file 'BMShil_tool_vision.a2l': DDE 'cblc_voltThreshBalance' is not defined by 'BMShil.elf.objdump' but is required for ASAP2 generation, DDE not added to ASAP2 file.
+(capi.py): (warning 3010): file 'BMShil_tool_canape.a2l': DDE 'BMSc_cabinTemperature' is not defined by 'BMShil.elf.objdump' but is required for ASAP2 generation, DDE not added to ASAP2 file.
+(capi.py): (warning 3010): file 'BMShil_tool_canape.a2l': DDE 'cblc_voltThreshBalance' is not defined by 'BMShil.elf.objdump' but is required for ASAP2 generation, DDE not added to ASAP2 file.

@@ -1,0 +1,32 @@
+%implements s13_b0_qospi_5_InitializeConditions "C"
+
+%function InitializeConditions(block, system) Output
+%assign cfgTxt = ""
+%openfile cfgTxt
+%assign localVarDecl = ""
+/* InitializeConditions for DiscreteIntegrator: '<S3>/Discrete-Time Integrator' */
+%<SLibCG_SetDWV(13, 0, 9, 1, "", -1, "", 0, "1U")>\
+%<SLibCG_SetDWV(12, 0, 9, 1, "", -1, "", 0, "2")>\
+%closefile cfgTxt
+%<cfgTxt>
+%assign rtmArgSys = ::CompiledModel.System[::CompiledModel.System[::CompiledModel.RTWCGModules.RTWCGModule[5].CGSystemIdx].NonInlinedParentSystemIdx]
+%if SysFcnArgNeeded("Initialize", rtmArgSys.Interface.RTMArgDef, rtmArgSys.CurrentTID, SLibSystemFcnPeriodicRateGrouping(rtmArgSys, "Initialize"))
+%<SLibCG_AccessArg(5, 0, 0)>
+%endif
+%if SLibCG_ArgAccessed(5, 0, 0)
+%<SLibAccessArg(rtmArgSys.Interface.RTMArgDef, "Initialize", rtmArgSys.CurrentTID, SLibSystemFcnPeriodicRateGrouping(rtmArgSys, "Initialize"))>
+%endif
+%if (IsModelReferenceBaseSys(rtmArgSys) && (IsModelRefScalableBuild() || GenerateClassInterface))
+%<SLibCG_UndoAccessArg(5, 0, 0)>
+%endif
+%assign fcnProtoType = ""
+%openfile fcnProtoType
+static void soc0_CC_counting_Init(\
+%assign comma = ""
+%if SLibCG_ArgAccessed(5, 0, 0)
+%<comma>%<tSimStructType> * const %<tSimStruct>\
+%assign comma = ", "
+%endif
+%closefile fcnProtoType
+%<SLibCG_SetFcnProtoType(5, 0, fcnProtoType)>
+%endfunction

@@ -1,0 +1,13 @@
+%implements s13_b0_qospi_ModuleConstants "C"
+
+%function ModuleConstants(block) Output
+
+
+/* Named constants for Chart: '<S1>/Chart' */
+#define soc0_IN_NO_ACTIVE_CHILD_f ((uint8_T)0U)
+#define soc0_IN_coulomb_counting ((uint8_T)1U)
+#define soc0_IN_dataStore ((uint8_T)2U)
+#define soc0_IN_end ((uint8_T)3U)
+#define soc0_IN_init ((uint8_T)4U)
+#define soc0_IN_key_ON ((uint8_T)5U)
+%endfunction

@@ -1,0 +1,465 @@
+%implements s13_b0_qospi_Outputs "C"
+
+%function Outputs(block, system) Output
+%assign cfgTxt = ""
+%openfile cfgTxt
+%assign localVarDecl = ""
+%openfile localVarDecl
+real_T minV;
+boolean_T rtb_LogicalOperator;
+real_T rtb_SumofElements;
+int32_T i;
+B_soc0_T *_rtB;
+%closefile localVarDecl
+%assign _modelSS = ""
+
+%<SLibCG_TrackBlockIO(13)>\
+_rtB = %<(SLibCG_SE(SLibGetBlockIOStructPtr()))>;
+%<SLibCG_TrackEO(5)>\
+%<SLibCG_TrackEO(4)>\
+%<SLibCG_TrackEO(3)>\
+%<SLibCG_TrackEO(2)>\
+%<SLibCG_TrackEO(1)>\
+%<SLibCG_TrackEO(0)>\
+%<SLibCG_TrackEI(5)>\
+%<SLibCG_TrackEI(4)>\
+%<SLibCG_TrackEI(3)>\
+%<SLibCG_TrackEI(2)>\
+/* Outputs for Atomic SubSystem: '<Root>/soc' */
+/* Logic: '<S1>/Logical Operator' incorporates:
+ *  Inport: '<Root>/charger_contactor'
+ *  Inport: '<Root>/main_contactor'
+ */
+rtb_LogicalOperator = ((*((const boolean_T **)ssGetInputPortSignalPtrs(%<tSimStruct>, 2))[0]) || (*((const boolean_T **)ssGetInputPortSignalPtrs(%<tSimStruct>, 3))[0]));
+/* Delay: '<S1>/Delay' */
+memcpy(&_rtB->Delay[0], %<(SLibCG_DWVAddr(0, 0, 13, 40, "", -1, "", 0))>, 40U * sizeof(real_T));
+/* Delay: '<S1>/Delay1' */
+_rtB->Delay1 = %<(SLibCG_SE(SLibCG_DWV(1, 0, 13, 1, "", -1, "", 0)))>;
+/* Chart: '<S1>/Chart' incorporates:
+ *  Inport: '<Root>/cb_cmds'
+ *  Inport: '<Root>/cell_voltages'
+ *  Inport: '<Root>/pre_chg_contactor'
+ *  Inport: '<Root>/soh_C_factors'
+ *  Inport: '<Root>/vitm_pack_current'
+ */
+/* Gateway: soc/Chart */
+/* During: soc/Chart */
+if (%<(SLibCG_SE(SLibCG_DWV(8, 0, 13, 1, "", -1, "", 0)))> == 0U) {
+    /* Entry: soc/Chart */
+%<SLibCG_SetDWV(8, 0, 13, 1, "", -1, "", 0, "1U")>\
+    /* Entry Internal: soc/Chart */
+    /* Transition: '<S4>:8' */
+%<SLibCG_SetDWV(7, 0, 13, 1, "", -1, "", 0, "soc0_IN_init")>\
+%assign   Outputs_open_Init_11_4 = ""
+%openfile Outputs_open_Init_11_4
+
+    /* Outputs for Function Call SubSystem: '<S1>/Init' */
+%closefile Outputs_open_Init_11_4
+
+%assign    Outputs_body_Init_11_4 = ""
+%openfile  Outputs_body_Init_11_4
+
+    /* Entry Internal 'init': '<S4>:1' */
+    /* Transition: '<S4>:44' */
+    /* Transition: '<S4>:42' */
+    /* Event: '<S4>:2' */
+%if !SLibCGSysFcnIsEmptyForTid(CompiledModel.System[2], "Output",0)
+%if SLibCG_SystemFcnArgAccessed("soc0_Init",2,0)
+%<SLibCG_AccessArg(7 ,2, 0)>
+%endif
+%if SLibCG_SystemFcnArgAccessed("soc0_Init",2,1)
+%<SLibCG_TrackEI(1)>
+%<SLibCG_AccessArg(7 ,2, 0)>
+%endif
+
+%<SLibCGIRGenReusableSysCall("soc0_Init", ["%<tSimStruct>", "((const real_T **)ssGetInputPortSignalPtrs(%<tSimStruct>, 1))[0]", "_rtB->Merge2", "&_rtB->Merge1"], 2, 0, 7, 0, 7, 13)>\
+
+%endif
+%closefile Outputs_body_Init_11_4
+
+%assign    Outputs_close_Init_11_4 = ""
+%openfile  Outputs_close_Init_11_4
+
+    /* End of Outputs for SubSystem: '<S1>/Init' */
+%closefile Outputs_close_Init_11_4
+%<SLibCG_DumpSSCode(Outputs_open_Init_11_4, Outputs_body_Init_11_4, Outputs_close_Init_11_4)>
+
+} else {
+    switch (%<(SLibCG_DWV(7, 0, 13, 1, "", -1, "", 0))>) {
+      case soc0_IN_coulomb_counting:
+        /* During 'coulomb_counting': '<S4>:4' */
+        if ((!rtb_LogicalOperator) && (!*((const boolean_T **)ssGetInputPortSignalPtrs(%<tSimStruct>, 4))[0])) {
+            /* Transition: '<S4>:30' */
+%<SLibCG_SetDWV(7, 0, 13, 1, "", -1, "", 0, "soc0_IN_dataStore")>\
+            /* Outputs for Function Call SubSystem: '<S1>/dataStore' */
+            /* DataStoreWrite: '<S7>/Data Store Write' incorporates:
+ *  Inport: '<Root>/soh_C_factors'
+ */
+            /* Entry Internal 'dataStore': '<S4>:21' */
+            /* Transition: '<S4>:78' */
+            /* Transition: '<S4>:76' */
+            /* Event: '<S4>:79' */
+            memcpy(%<(SLibCG_DWVAddr(6, 0, 13, 40, "", -1, "", 0))>, ((const real_T **)ssGetInputPortSignalPtrs(%<tSimStruct>, 5))[0], 40U * sizeof(real_T));
+            /* End of Outputs for SubSystem: '<S1>/dataStore' */
+        } else {
+%assign   Outputs_open_CC_counting_11_6 = ""
+%openfile Outputs_open_CC_counting_11_6
+
+            /* Outputs for Function Call SubSystem: '<S1>/CC_counting' */
+%closefile Outputs_open_CC_counting_11_6
+
+%assign    Outputs_body_CC_counting_11_6 = ""
+%openfile  Outputs_body_CC_counting_11_6
+
+            /* Transition: '<S4>:50' */
+            /* Transition: '<S4>:49' */
+            /* Event: '<S4>:3' */
+%if !SLibCGSysFcnIsEmptyForTid(CompiledModel.System[9], "Output",0)
+%if SLibCG_SystemFcnArgAccessed("soc0_CC_counting",9,0)
+%<SLibCG_AccessArg(7 ,2, 0)>
+%endif
+%if SLibCG_SystemFcnArgAccessed("soc0_CC_counting",9,1)
+%<SLibCG_TrackEI(0)>
+%<SLibCG_AccessArg(7 ,2, 0)>
+%endif
+%if SLibCG_SystemFcnArgAccessed("soc0_CC_counting",9,2)
+%<SLibCG_TrackEI(5)>
+%<SLibCG_AccessArg(7 ,2, 0)>
+%endif
+%if SLibCG_SystemFcnArgAccessed("soc0_CC_counting",9,3)
+%<SLibCG_TrackEI(1)>
+%<SLibCG_AccessArg(7 ,2, 0)>
+%endif
+%if SLibCG_SystemFcnArgAccessed("soc0_CC_counting",9,4)
+%<SLibCG_TrackEI(7)>
+%<SLibCG_AccessArg(7 ,2, 0)>
+%endif
+
+%<SLibCGIRGenReusableSysCall("soc0_CC_counting", ["%<tSimStruct>", "*((const real_T **)ssGetInputPortSignalPtrs(%<tSimStruct>, 0))[0]", "((const real_T **)ssGetInputPortSignalPtrs(%<tSimStruct>, 5))[0]", "((const real_T **)ssGetInputPortSignalPtrs(%<tSimStruct>, 1))[0]", "((const boolean_T **)ssGetInputPortSignalPtrs(%<tSimStruct>, 7))[0]", "_rtB->Delay", "_rtB->Delay1", "_rtB->Merge2", "&_rtB->Merge1"], 9, 0, 7, 0, 7, 13)>\
+
+%endif
+%closefile Outputs_body_CC_counting_11_6
+
+%assign    Outputs_close_CC_counting_11_6 = ""
+%openfile  Outputs_close_CC_counting_11_6
+
+            /* End of Outputs for SubSystem: '<S1>/CC_counting' */
+%closefile Outputs_close_CC_counting_11_6
+%<SLibCG_DumpSSCode(Outputs_open_CC_counting_11_6, Outputs_body_CC_counting_11_6, Outputs_close_CC_counting_11_6)>
+
+        }
+        break;
+      case soc0_IN_dataStore:
+        /* During 'dataStore': '<S4>:21' */
+        /* Transition: '<S4>:81' */
+%<SLibCG_SetDWV(7, 0, 13, 1, "", -1, "", 0, "soc0_IN_end")>\
+        break;
+      case soc0_IN_end:
+        /* During 'end': '<S4>:80' */
+        if ((*((const boolean_T **)ssGetInputPortSignalPtrs(%<tSimStruct>, 4))[0]) || rtb_LogicalOperator) {
+            /* Transition: '<S4>:55' */
+%<SLibCG_SetDWV(7, 0, 13, 1, "", -1, "", 0, "soc0_IN_key_ON")>\
+%assign   Outputs_open_key_on_11_5 = ""
+%openfile Outputs_open_key_on_11_5
+
+            /* Outputs for Function Call SubSystem: '<S1>/key_on' */
+%closefile Outputs_open_key_on_11_5
+
+%assign    Outputs_body_key_on_11_5 = ""
+%openfile  Outputs_body_key_on_11_5
+
+            /* Entry Internal 'key_ON': '<S4>:52' */
+            /* Transition: '<S4>:60' */
+            /* Transition: '<S4>:59' */
+            /* Event: '<S4>:61' */
+%if !SLibCGSysFcnIsEmptyForTid(CompiledModel.System[8], "Output",0)
+%if SLibCG_SystemFcnArgAccessed("soc0_key_on",8,0)
+%<SLibCG_AccessArg(7 ,2, 0)>
+%endif
+
+%<SLibCGIRGenReusableSysCall("soc0_key_on", ["%<tSimStruct>"], 8, 0, 7, 0, 7, 13)>\
+
+%endif
+%closefile Outputs_body_key_on_11_5
+
+%assign    Outputs_close_key_on_11_5 = ""
+%openfile  Outputs_close_key_on_11_5
+
+            /* End of Outputs for SubSystem: '<S1>/key_on' */
+%closefile Outputs_close_key_on_11_5
+%<SLibCG_DumpSSCode(Outputs_open_key_on_11_5, Outputs_body_key_on_11_5, Outputs_close_key_on_11_5)>
+
+        }
+        break;
+      case soc0_IN_init:
+        /* During 'init': '<S4>:1' */
+        if ((*((const boolean_T **)ssGetInputPortSignalPtrs(%<tSimStruct>, 4))[0]) || rtb_LogicalOperator) {
+            /* Transition: '<S4>:54' */
+%<SLibCG_SetDWV(7, 0, 13, 1, "", -1, "", 0, "soc0_IN_key_ON")>\
+%assign   Outputs_open_key_on_11_5 = ""
+%openfile Outputs_open_key_on_11_5
+
+            /* Outputs for Function Call SubSystem: '<S1>/key_on' */
+%closefile Outputs_open_key_on_11_5
+
+%assign    Outputs_body_key_on_11_5 = ""
+%openfile  Outputs_body_key_on_11_5
+
+            /* Entry Internal 'key_ON': '<S4>:52' */
+            /* Transition: '<S4>:60' */
+            /* Transition: '<S4>:59' */
+            /* Event: '<S4>:61' */
+%if !SLibCGSysFcnIsEmptyForTid(CompiledModel.System[8], "Output",0)
+%if SLibCG_SystemFcnArgAccessed("soc0_key_on",8,0)
+%<SLibCG_AccessArg(7 ,2, 0)>
+%endif
+
+%<SLibCGIRGenReusableSysCall("soc0_key_on", ["%<tSimStruct>"], 8, 0, 7, 0, 7, 13)>\
+
+%endif
+%closefile Outputs_body_key_on_11_5
+
+%assign    Outputs_close_key_on_11_5 = ""
+%openfile  Outputs_close_key_on_11_5
+
+            /* End of Outputs for SubSystem: '<S1>/key_on' */
+%closefile Outputs_close_key_on_11_5
+%<SLibCG_DumpSSCode(Outputs_open_key_on_11_5, Outputs_body_key_on_11_5, Outputs_close_key_on_11_5)>
+
+        } else {
+%assign   Outputs_open_Init_11_4 = ""
+%openfile Outputs_open_Init_11_4
+
+            /* Outputs for Function Call SubSystem: '<S1>/Init' */
+%closefile Outputs_open_Init_11_4
+
+%assign    Outputs_body_Init_11_4 = ""
+%openfile  Outputs_body_Init_11_4
+
+            /* Transition: '<S4>:44' */
+            /* Transition: '<S4>:42' */
+            /* Event: '<S4>:2' */
+%if !SLibCGSysFcnIsEmptyForTid(CompiledModel.System[2], "Output",0)
+%if SLibCG_SystemFcnArgAccessed("soc0_Init",2,0)
+%<SLibCG_AccessArg(7 ,2, 0)>
+%endif
+%if SLibCG_SystemFcnArgAccessed("soc0_Init",2,1)
+%<SLibCG_TrackEI(1)>
+%<SLibCG_AccessArg(7 ,2, 0)>
+%endif
+
+%<SLibCGIRGenReusableSysCall("soc0_Init", ["%<tSimStruct>", "((const real_T **)ssGetInputPortSignalPtrs(%<tSimStruct>, 1))[0]", "_rtB->Merge2", "&_rtB->Merge1"], 2, 0, 7, 0, 7, 13)>\
+
+%endif
+%closefile Outputs_body_Init_11_4
+
+%assign    Outputs_close_Init_11_4 = ""
+%openfile  Outputs_close_Init_11_4
+
+            /* End of Outputs for SubSystem: '<S1>/Init' */
+%closefile Outputs_close_Init_11_4
+%<SLibCG_DumpSSCode(Outputs_open_Init_11_4, Outputs_body_Init_11_4, Outputs_close_Init_11_4)>
+
+        }
+        break;
+      default:
+        /* During 'key_ON': '<S4>:52' */
+        if ((*((const boolean_T **)ssGetInputPortSignalPtrs(%<tSimStruct>, 4))[0]) || rtb_LogicalOperator) {
+            /* Transition: '<S4>:53' */
+%<SLibCG_SetDWV(7, 0, 13, 1, "", -1, "", 0, "soc0_IN_coulomb_counting")>\
+%assign   Outputs_open_CC_counting_11_6 = ""
+%openfile Outputs_open_CC_counting_11_6
+
+            /* Outputs for Function Call SubSystem: '<S1>/CC_counting' */
+%closefile Outputs_open_CC_counting_11_6
+
+%assign    Outputs_body_CC_counting_11_6 = ""
+%openfile  Outputs_body_CC_counting_11_6
+
+            /* Entry Internal 'coulomb_counting': '<S4>:4' */
+            /* Transition: '<S4>:50' */
+            /* Transition: '<S4>:49' */
+            /* Event: '<S4>:3' */
+%if !SLibCGSysFcnIsEmptyForTid(CompiledModel.System[9], "Output",0)
+%if SLibCG_SystemFcnArgAccessed("soc0_CC_counting",9,0)
+%<SLibCG_AccessArg(7 ,2, 0)>
+%endif
+%if SLibCG_SystemFcnArgAccessed("soc0_CC_counting",9,1)
+%<SLibCG_TrackEI(0)>
+%<SLibCG_AccessArg(7 ,2, 0)>
+%endif
+%if SLibCG_SystemFcnArgAccessed("soc0_CC_counting",9,2)
+%<SLibCG_TrackEI(5)>
+%<SLibCG_AccessArg(7 ,2, 0)>
+%endif
+%if SLibCG_SystemFcnArgAccessed("soc0_CC_counting",9,3)
+%<SLibCG_TrackEI(1)>
+%<SLibCG_AccessArg(7 ,2, 0)>
+%endif
+%if SLibCG_SystemFcnArgAccessed("soc0_CC_counting",9,4)
+%<SLibCG_TrackEI(7)>
+%<SLibCG_AccessArg(7 ,2, 0)>
+%endif
+
+%<SLibCGIRGenReusableSysCall("soc0_CC_counting", ["%<tSimStruct>", "*((const real_T **)ssGetInputPortSignalPtrs(%<tSimStruct>, 0))[0]", "((const real_T **)ssGetInputPortSignalPtrs(%<tSimStruct>, 5))[0]", "((const real_T **)ssGetInputPortSignalPtrs(%<tSimStruct>, 1))[0]", "((const boolean_T **)ssGetInputPortSignalPtrs(%<tSimStruct>, 7))[0]", "_rtB->Delay", "_rtB->Delay1", "_rtB->Merge2", "&_rtB->Merge1"], 9, 0, 7, 0, 7, 13)>\
+
+%endif
+%closefile Outputs_body_CC_counting_11_6
+
+%assign    Outputs_close_CC_counting_11_6 = ""
+%openfile  Outputs_close_CC_counting_11_6
+
+            /* End of Outputs for SubSystem: '<S1>/CC_counting' */
+%closefile Outputs_close_CC_counting_11_6
+%<SLibCG_DumpSSCode(Outputs_open_CC_counting_11_6, Outputs_body_CC_counting_11_6, Outputs_close_CC_counting_11_6)>
+
+        } else {
+%assign   Outputs_open_key_on_11_5 = ""
+%openfile Outputs_open_key_on_11_5
+
+            /* Outputs for Function Call SubSystem: '<S1>/key_on' */
+%closefile Outputs_open_key_on_11_5
+
+%assign    Outputs_body_key_on_11_5 = ""
+%openfile  Outputs_body_key_on_11_5
+
+            /* Transition: '<S4>:60' */
+            /* Transition: '<S4>:59' */
+            /* Event: '<S4>:61' */
+%if !SLibCGSysFcnIsEmptyForTid(CompiledModel.System[8], "Output",0)
+%if SLibCG_SystemFcnArgAccessed("soc0_key_on",8,0)
+%<SLibCG_AccessArg(7 ,2, 0)>
+%endif
+
+%<SLibCGIRGenReusableSysCall("soc0_key_on", ["%<tSimStruct>"], 8, 0, 7, 0, 7, 13)>\
+
+%endif
+%closefile Outputs_body_key_on_11_5
+
+%assign    Outputs_close_key_on_11_5 = ""
+%openfile  Outputs_close_key_on_11_5
+
+            /* End of Outputs for SubSystem: '<S1>/key_on' */
+%closefile Outputs_close_key_on_11_5
+%<SLibCG_DumpSSCode(Outputs_open_key_on_11_5, Outputs_body_key_on_11_5, Outputs_close_key_on_11_5)>
+
+        }
+        break;
+    }
+}
+/* End of Chart: '<S1>/Chart' */
+
+/* DataStoreWrite: '<S1>/Data Store Write' */
+memcpy(%<(SLibCG_DWVAddr(3, 0, 13, 40, "", -1, "", 0))>, &_rtB->Merge2[0], 40U * sizeof(real_T));
+/* Sum: '<S1>/Sum of Elements' */
+rtb_SumofElements = _rtB->Merge2[0];
+for (i = 0; i < 39; i++) {
+    rtb_SumofElements += _rtB->Merge2[i + 1];
+}
+/* End of Sum: '<S1>/Sum of Elements' */
+
+/* Product: '<S1>/Divide1' incorporates:
+ *  Constant: '<S1>/Constant3'
+ */
+_rtB->Divide1 = rtb_SumofElements / %<(SLibCG_SE(SLibCGIR_PV(6, 0, 13, 1, "", -1, "", 0)))>;
+/* Gain: '<S1>/Gain' */
+for (i = 0; i < 40; i++) {
+    _rtB->Gain[i] = %<(SLibCG_SE(SLibCGIR_PV(9, 0, 13, 1, "", -1, "", 0)))> * _rtB->Merge2[i];
+}
+/* End of Gain: '<S1>/Gain' */
+
+/* MinMax: '<S1>/MinMax' */
+rtb_SumofElements = _rtB->Merge2[0];
+/* MinMax: '<S1>/MinMax1' */
+minV = _rtB->Merge2[0];
+for (i = 0; i < 39; i++) {
+    /* MinMax: '<S1>/MinMax' */
+    if (!((rtb_SumofElements >= _rtB->Merge2[i + 1]) || rtIsNaN(_rtB->Merge2[i + 1]))) {
+        rtb_SumofElements = _rtB->Merge2[i + 1];
+    }
+    /* MinMax: '<S1>/MinMax1' */
+    if (!((minV <= _rtB->Merge2[i + 1]) || rtIsNaN(_rtB->Merge2[i + 1]))) {
+        minV = _rtB->Merge2[i + 1];
+    }
+}
+/* Switch: '<S1>/Switch' incorporates:
+ *  Constant: '<S1>/Constant2'
+ *  MinMax: '<S1>/MinMax'
+ *  RelationalOperator: '<S1>/RelationalOperator'
+ */
+if (rtb_SumofElements < %<(SLibCG_SE(SLibCGIR_PV(7, 0, 13, 1, "", -1, "", 0)))>) {
+    /* Switch: '<S1>/Switch1' incorporates:
+ *  Constant: '<S1>/Constant4'
+ *  MinMax: '<S1>/MinMax1'
+ *  RelationalOperator: '<S1>/RelationalOperator1'
+ */
+    if (minV <= %<(SLibCG_SE(SLibCGIR_PV(8, 0, 13, 1, "", -1, "", 0)))>) {
+        /* Outport: '<Root>/soc_pack_customer' incorporates:
+ *  Constant: '<S1>/Constant5'
+ */
+        ((real_T *)ssGetOutputPortSignal(%<tSimStruct>, 1))[0] = 0.0;
+    } else {
+        /* Outport: '<Root>/soc_pack_customer' incorporates:
+ *  Lookup_n-D: '<S1>/Customer interpolation'
+ */
+        ((real_T *)ssGetOutputPortSignal(%<tSimStruct>, 1))[0] = soc0_look1_binlx(_rtB->Divide1, soc0_ConstP.Customerinterpolation_bp01Data, soc0_ConstP.Customerinterpolation_tableData, 1U);
+    }
+} else {
+    /* Outport: '<Root>/soc_pack_customer' incorporates:
+ *  Constant: '<S1>/Constant6'
+ *  Switch: '<S1>/Switch1'
+ */
+    ((real_T *)ssGetOutputPortSignal(%<tSimStruct>, 1))[0] = 100.0;
+}
+/* End of Switch: '<S1>/Switch' */
+/* End of Outputs for SubSystem: '<Root>/soc' */
+
+/* Outport: '<Root>/soc_cells_pct' */
+memcpy(&((real_T *)ssGetOutputPortSignal(%<tSimStruct>, 0))[0], &_rtB->Merge2[0], 40U * sizeof(real_T));
+/* Outputs for Atomic SubSystem: '<Root>/soc' */
+/* Outport: '<Root>/soc_cell_max' incorporates:
+ *  MinMax: '<S1>/MinMax'
+ */
+((real_T *)ssGetOutputPortSignal(%<tSimStruct>, 2))[0] = rtb_SumofElements;
+/* Outport: '<Root>/soc_cell_min' incorporates:
+ *  MinMax: '<S1>/MinMax1'
+ */
+((real_T *)ssGetOutputPortSignal(%<tSimStruct>, 3))[0] = minV;
+/* End of Outputs for SubSystem: '<Root>/soc' */
+
+/* Outport: '<Root>/soc_pack_actual' */
+((real_T *)ssGetOutputPortSignal(%<tSimStruct>, 4))[0] = _rtB->Divide1;
+/* Outputs for Atomic SubSystem: '<Root>/soc' */
+/* Outport: '<Root>/soc_rate_high' incorporates:
+ *  Constant: '<S1>/Constant1'
+ *  Constant: '<S2>/Constant'
+ *  Product: '<S1>/Divide2'
+ *  RelationalOperator: '<S2>/Compare'
+ *  Sum: '<S5>/Diff'
+ *  UnitDelay: '<S5>/UD'
+ */
+((boolean_T *)ssGetOutputPortSignal(%<tSimStruct>, 5))[0] = ((_rtB->Divide1 - %<(SLibCG_SE(SLibCG_DWV(2, 0, 13, 1, "", -1, "", 0)))>) / %<(SLibCG_SE(SLibCGIR_PV(11, 0, 13, 1, "", -1, "", 0)))> <= -1.0);
+/* End of Outputs for SubSystem: '<Root>/soc' */
+%<SLibInsertSolverResetCode()>\
+%closefile cfgTxt
+%<cfgTxt>
+%assign rtmArgSys = ::CompiledModel.System[::CompiledModel.System[::CompiledModel.RTWCGModules.RTWCGModule[7].CGSystemIdx].NonInlinedParentSystemIdx]
+%if SysFcnArgNeeded("Output", rtmArgSys.Interface.RTMArgDef, rtmArgSys.CurrentTID, SLibSystemFcnPeriodicRateGrouping(rtmArgSys, "Output"))
+%<SLibCG_AccessArg(7, 2, 0)>
+%endif
+%if SLibCG_ArgAccessed(7, 2, 0)
+%<SLibAccessArg(rtmArgSys.Interface.RTMArgDef, "Output", rtmArgSys.CurrentTID, SLibSystemFcnPeriodicRateGrouping(rtmArgSys, "Output"))>
+%endif
+%if (IsModelReferenceBaseSys(rtmArgSys) && (IsModelRefScalableBuild() || GenerateClassInterface))
+%<SLibCG_UndoAccessArg(7, 2, 0)>
+%endif
+%assign fcnProtoType = ""
+%openfile fcnProtoType
+static void Outputs(\
+%assign comma = ""
+%<comma>%<tSimStructType> *%<tSimStruct>\
+%assign comma = ", "
+%closefile fcnProtoType
+%<SLibCG_SetFcnProtoType(7, 2, fcnProtoType)>
+%<LibSetSystemField(system, "CachedOutputLocalVars", localVarDecl)>
+%endfunction

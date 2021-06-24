@@ -1,0 +1,163 @@
+<snoop_workspace version="9.5.0.0" variant="PiSnoop Professional (Time-limited trial)">
+  <properties on_open_offer_load="true" clip_values_to_file_limits="false" ignore_file_decimal_places="false" add_units_row_to_logfiles="false" suppress_null_dereference="true" machine_null_value="0" on_open_display_message="false" template_open_display_message="false">
+    <template_open_message>
+    </template_open_message>
+    <on_open_message>
+    </on_open_message>
+    <custom_properties>
+      <property name="Author" value="$Author$" />
+      <property name="Revision" value="$Revision$" />
+      <property name="Date" value="$Date$" />
+      <property name="URL" value="$HeadURL$" />
+    </custom_properties>
+    <nudge_settings>
+    </nudge_settings>
+  </properties>
+  <snoop_main_window>
+    <window_attributes window_state="maximized">
+      <rectangle top="0" left="560" width="899" height="590" />
+    </window_attributes>
+    <ordered_windows>
+      <window type="NS_Snoop.FrmEcuConfig" title="ECU1" />
+      <window type="NS_Snoop.FrmWatch" title="Watch1" />
+      <window type="NS_Snoop.FrmHardwareInterface" title="CAN1" />
+      <window type="NS_Snoop.FrmHardwareInterface" title="CAN2" />
+      <window type="NS_Snoop.FrmWatch" title="Watch6" />
+    </ordered_windows>
+  </snoop_main_window>
+  <snoop_hardware_channel name="CAN1">
+    <plugin_properties>
+      <description>Kvaser CAN Interface</description>
+      <settings channel_index="0" kbaud="500" sample_point_percent="80" tx_queue_size="8" exclusive_mode="true" use_virtual="false" />
+    </plugin_properties>
+    <window_attributes window_state="normal">
+      <rectangle top="395" left="655" width="708" height="312" />
+    </window_attributes>
+  </snoop_hardware_channel>
+  <snoop_hardware_channel name="CAN2">
+    <plugin_properties>
+      <description>Kvaser CAN Interface</description>
+      <settings channel_index="2" kbaud="500" sample_point_percent="80" tx_queue_size="8" exclusive_mode="true" use_virtual="false" />
+    </plugin_properties>
+    <window_attributes window_state="minimized">
+      <rectangle top="0" left="133" width="420" height="312" />
+    </window_attributes>
+  </snoop_hardware_channel>
+  <snoop_dbc_config>
+    <file path="C:\Sagar\Projects\BMS\P006n\08_Work_in_progress\WP3_2_BMS_Stage_1\HiL\VEHdb.dbc" relative="VEHdb.dbc" load="true" last_error="">
+      <associated_hw hw_name="CAN1" associated="false" />
+      <associated_hw hw_name="CAN2" associated="true" />
+    </file>
+    <file path="C:\Sagar\Projects\BMS\P006n\08_Work_in_progress\WP3_2_BMS_Stage_1\HiL_IO_test\BMSdb.dbc" relative="..\HiL_IO_test\BMSdb.dbc" load="false" last_error="">
+      <associated_hw hw_name="CAN1" associated="false" />
+      <associated_hw hw_name="CAN2" associated="true" />
+    </file>
+  </snoop_dbc_config>
+  <snoop_ecu name="ECU1">
+    <protocol>
+      <plugin_properties settings_name="settings">
+        <description>CAN Calibration Protocol (CCP) v2.1</description>
+        <settings dto_id="1784" cro_id="1785" station_address="0" msb_first_addresses="true" try_session_status="true" try_short_up="true" try_dnload6="true" try_checksum_acceleration="true" use_program_flush="true" general_timeout_ms="50" program_timeout_ms="800" erase_timeout_ms="8000" small_upload_timeout_ms="10" checksum_timeout_ms="200" max_checksum_size="10240" try_daq="true" daq_fail_poll_period_multiplier="10" daq_event_period_ms="5" daq_event_channel="0" daq_use_period_ec0="true" gain_daq_security_on_connect="true">
+          <security purpose="ccp" />
+        </settings>
+      </plugin_properties>
+    </protocol>
+    <settings auto_start_comms="true" />
+    <hardware_channel>CAN1</hardware_channel>
+    <file path="C:\Sagar\Projects\BMS\P006n\08_Work_in_progress\WP3_2_BMS_Stage_1\HiL\BMShil_tool_generic.a2l" relative="BMShil_tool_generic.a2l" enabled="true" symbols="true" load="false" download="false" flash="false" upload="false" save="false" last_warning="" operation_in_progress="false" percent_complete="0">
+      <properties disk_properties_error="" exists_on_disk="true" time_disk_modified="2020-05-26T15:39:30.6733888-04:00" size_bytes_on_disk="140726" access_error_since_use="true" time_operation_started="2020-05-26T15:40:17.8117930-04:00" last_time_loaded="2020-05-26T15:40:17.8117930-04:00" last_time_downloaded="0001-01-01T00:00:00.0000000" last_time_flashed="0001-01-01T00:00:00.0000000" last_time_saved="0001-01-01T00:00:00.0000000">
+        <upload_area type="manually_defined" manual_regions_contiguous="true" const_regions_contiguous="false">
+          <upload_region start_address="Calibration" byte_length="" />
+          <upload_region start_address=".cal_sec" byte_length="" />
+          <upload_region start_address=".fl_adap" byte_length="" />
+          <upload_region start_address=".sdata2" byte_length="" />
+        </upload_area>
+        <upload_by_parameters c_template_path="" c_template_relative="" />
+      </properties>
+    </file>
+    <file path="C:\Sagar\Projects\BMS\P006n\08_Work_in_progress\WP3_2_BMS_Stage_1\HiL\BMShil_image_small.hex" relative="BMShil_image_small.hex" enabled="true" symbols="false" load="true" download="false" flash="true" upload="false" save="false" last_warning="" percent_complete="0" operation_in_progress="false">
+      <properties disk_properties_error="" exists_on_disk="true" time_disk_modified="2020-05-26T15:39:37.9342721-04:00" size_bytes_on_disk="668372" time_operation_started="2020-05-26T15:40:19.2316276-04:00" load_memory_type="file_data" last_time_loaded="2020-05-26T15:40:18.2479060-04:00" access_error_since_use="true" last_time_flashed="2020-05-26T15:40:19.2316276-04:00" last_time_downloaded="0001-01-01T00:00:00.0000000" last_time_saved="0001-01-01T00:00:00.0000000">
+        <upload_area type="manually_defined" manual_regions_contiguous="true" const_regions_contiguous="false">
+          <upload_region start_address="Calibration" byte_length="" />
+          <upload_region start_address=".cal_sec" byte_length="" />
+          <upload_region start_address=".fl_adap" byte_length="" />
+          <upload_region start_address=".sdata2" byte_length="" />
+        </upload_area>
+        <upload_by_parameters c_template_path="" c_template_relative="" />
+      </properties>
+    </file>
+    <calibration_area include_gaps="true">
+      <upload_region start_address="Calibration" byte_length="" errors="" address_numeric="262144" length_numeric="10668" />
+    </calibration_area>
+    <window_attributes window_state="normal" details_shown="true">
+      <rectangle top="238" left="-5" width="534" height="505" />
+    </window_attributes>
+  </snoop_ecu>
+  <snoop_asap3_config />
+  <snoop_watch name="Watch1">
+    <window_attributes window_state="normal">
+      <rectangle top="0" left="651" width="858" height="513" />
+    </window_attributes>
+    <display scope_showing="true" scope_horizontal="false" autohide_buttons="true" scope_split_vertical="0.5" scope_split_horizontal="0.5" enums="decimal_and_label" pointers="label_or_hex" scope_timebase_sec="1" scope_acq_period_ms="10" scope_exclude_cals_from_daq="true" scope_exclude_unselected_signals_from_daq="true" scope_black_background="true" scope_show_points="false" scope_use_steps="false" scope_autoscale_mode="overlaid" />
+    <can_signals dbc_to_timeout_mult="10" no_dbc_period_timeout_ms="3000" />
+    <logging target_period_ms="100" filename_style="date_time_sortable" format="compact" can_format="with_variables" enums="decimal" pointers="label_or_hex" logfile_absolute="C:\Sagar\Projects\BMS\P006n\08_Work_in_progress\WP3_2_BMS_Stage_1\HiL\2020_05_22_204051_HiLSnoop_Watch1.csv" logfile_relative="2020_05_22_204051_HiLSnoop_Watch1.csv" paused_loaded_from_file="false" />
+    <columns>
+      <column name="ColAddress" index="0" visible="true" visible_scope_on="false" width="66" width_scope_on="30" font_name="Courier New" font_size="8.25" />
+      <column name="ColHex" index="1" visible="true" visible_scope_on="false" width="65" width_scope_on="32" font_name="Verdana" font_size="8.25" />
+      <column name="ColValue" index="2" visible="true" visible_scope_on="true" width="99" width_scope_on="67" font_name="Verdana" font_size="8.25" />
+      <column name="ColName" index="3" visible="true" visible_scope_on="true" width="328" width_scope_on="283" font_name="Verdana" font_size="8.25" />
+      <column name="ColType" index="4" visible="true" visible_scope_on="false" width="98" width_scope_on="53" font_name="Arial Narrow" font_size="8.25" />
+      <column name="ColUnits" index="5" visible="true" visible_scope_on="false" width="50" width_scope_on="30" font_name="Arial Narrow" font_size="8.25" />
+      <column name="ColDescription" index="6" visible="true" visible_scope_on="false" width="131" width_scope_on="87" font_name="Arial Narrow" font_size="8.25" />
+      <column name="ColScope" index="7" visible="false" visible_scope_on="true" width="66" width_scope_on="50" font_name="Arial" font_size="8.25" />
+    </columns>
+    <rows>
+      <row displayed_name="bsc_KeyValue" nesting_depth="0" ecu="ECU1" scope_on="false" scope_colour_set="true" scope_colour_user="false" scope_colour="-65536" />
+      <row displayed_name="bsc_VehiclePSR" nesting_depth="0" ecu="ECU1" scope_on="false" />
+      <row displayed_name="BMS_CellTemp" nesting_depth="0" ecu="ECU1" scope_on="false" />
+      <row displayed_name="BMS_CellVoltage" nesting_depth="0" ecu="ECU1" scope_on="false" />
+      <row displayed_name="BMS_RawPackCurrent" nesting_depth="0" ecu="ECU1" scope_on="false" scope_colour_set="true" scope_colour_user="false" scope_colour="-10496" />
+      <row displayed_name="BMS_RawPackVoltage" nesting_depth="0" ecu="ECU1" scope_on="false" scope_colour_set="true" scope_colour_user="false" scope_colour="-32944" />
+      <row displayed_name="BMS_RawVehSideVoltage" nesting_depth="0" ecu="ECU1" scope_on="false" />
+      <row displayed_name="bsc_ChargerValue" nesting_depth="0" ecu="ECU1" scope_on="false" scope_colour_set="true" scope_colour_user="false" scope_colour="-16711936" />
+      <row displayed_name="bsc_ChgContactorCmd" nesting_depth="0" ecu="ECU1" scope_on="false" />
+      <row displayed_name="bsc_MainContactorCmd" nesting_depth="0" ecu="ECU1" scope_on="false" />
+      <row displayed_name="bsc_FaultType" nesting_depth="0" ecu="ECU1" scope_on="false" scope_colour_set="true" scope_colour_user="false" scope_colour="-32944" />
+      <row displayed_name="soc_pack_actual" nesting_depth="0" ecu="ECU1" scope_on="true" scope_autoscaled="true" scope_colour_set="true" scope_colour_user="false" scope_colour="-32944" />
+      <row displayed_name="soh_C_index" nesting_depth="0" ecu="ECU1" scope_on="false" />
+      <row displayed_name="soh_R_index" nesting_depth="0" ecu="ECU1" scope_on="false" scope_colour_set="true" scope_colour_user="false" scope_colour="-65536" />
+      <row displayed_name="BMS_overrun" nesting_depth="0" ecu="ECU1" scope_on="false" />
+      <row displayed_name="sohc_current_threshold" nesting_depth="0" ecu="ECU1" scope_on="false" />
+      <row displayed_name="BMSc_airTemperature" nesting_depth="0" ecu="ECU1" scope_on="false" />
+      <row displayed_name="sohc_filter_coeff" nesting_depth="0" ecu="ECU1" scope_on="false" />
+      <row displayed_name="btc_coolant_flow_pct" nesting_depth="0" ecu="ECU1" scope_on="false" scope_colour_set="true" scope_colour_user="false" scope_colour="-65536" />
+      <row displayed_name="sohc_pct_R_limit" nesting_depth="0" ecu="ECU1" scope_on="false" />
+    </rows>
+  </snoop_watch>
+  <snoop_watch name="Watch6">
+    <window_attributes window_state="minimized">
+      <rectangle top="440" left="645" width="858" height="374" />
+    </window_attributes>
+    <display scope_showing="true" scope_horizontal="false" autohide_buttons="true" scope_split_vertical="0.5" scope_split_horizontal="0.5" enums="decimal_and_label" pointers="label_or_hex" scope_timebase_sec="1" scope_acq_period_ms="10" scope_exclude_cals_from_daq="true" scope_exclude_unselected_signals_from_daq="true" scope_black_background="true" scope_show_points="false" scope_use_steps="false" scope_autoscale_mode="stacked_separated" />
+    <can_signals dbc_to_timeout_mult="10" no_dbc_period_timeout_ms="3000" />
+    <logging target_period_ms="100" filename_style="date_time_sortable" format="compact" can_format="with_variables" enums="decimal" pointers="label_or_hex" logfile_absolute="C:\Sagar\Projects\BMS\P006n\08_Work_in_progress\WP3_2_BMS_Stage_1\HiL\" logfile_relative="" paused_loaded_from_file="false" />
+    <columns>
+      <column name="ColAddress" index="0" visible="true" visible_scope_on="false" width="60" width_scope_on="30" font_name="Courier New" font_size="8.25" />
+      <column name="ColHex" index="1" visible="true" visible_scope_on="false" width="61" width_scope_on="32" font_name="Verdana" font_size="8.25" />
+      <column name="ColValue" index="2" visible="true" visible_scope_on="true" width="91" width_scope_on="82" font_name="Verdana" font_size="8.25" />
+      <column name="ColName" index="3" visible="true" visible_scope_on="true" width="302" width_scope_on="275" font_name="Verdana" font_size="8.25" />
+      <column name="ColType" index="4" visible="true" visible_scope_on="false" width="90" width_scope_on="53" font_name="Arial Narrow" font_size="8.25" />
+      <column name="ColUnits" index="5" visible="true" visible_scope_on="false" width="46" width_scope_on="30" font_name="Arial Narrow" font_size="8.25" />
+      <column name="ColDescription" index="6" visible="true" visible_scope_on="false" width="121" width_scope_on="87" font_name="Arial Narrow" font_size="8.25" />
+      <column name="ColScope" index="7" visible="true" visible_scope_on="true" width="66" width_scope_on="60" font_name="Arial" font_size="8.25" />
+    </columns>
+    <rows>
+      <row displayed_name="CAN2.socket_charging_contactor" nesting_depth="0" scope_on="false" />
+      <row displayed_name="charger_contactor" nesting_depth="1" scope_on="false" scope_colour_set="true" scope_colour_user="false" scope_colour="-65536" />
+      <row displayed_name="CAN2.soh_info" nesting_depth="0" scope_on="false" />
+      <row displayed_name="soh_index" nesting_depth="1" scope_on="false" />
+      <row displayed_name="sohc_index" nesting_depth="1" scope_on="false" />
+      <row displayed_name="sohr_index" nesting_depth="1" scope_on="false" />
+    </rows>
+  </snoop_watch>
+</snoop_workspace>

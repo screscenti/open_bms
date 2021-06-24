@@ -1,0 +1,40 @@
+%implements s13_b0_qospi_2_Start "C"
+
+%function Start(block, system) Output
+%assign cfgTxt = ""
+%openfile cfgTxt
+%assign localVarDecl = ""
+%openfile localVarDecl
+int32_T i;
+%closefile localVarDecl
+/* VirtualOutportStart for Outport: '<S9>/Out1' */
+for (i = 0; i < 40; i++) {
+    localB->Sum[i] = 1.0;
+}
+/* End of VirtualOutportStart for Outport: '<S9>/Out1' */
+%closefile cfgTxt
+%<cfgTxt>
+%assign rtmArgSys = ::CompiledModel.System[::CompiledModel.System[::CompiledModel.RTWCGModules.RTWCGModule[2].CGSystemIdx].NonInlinedParentSystemIdx]
+%if SysFcnArgNeeded("Start", rtmArgSys.Interface.RTMArgDef, rtmArgSys.CurrentTID, SLibSystemFcnPeriodicRateGrouping(rtmArgSys, "Start"))
+%<SLibCG_AccessArg(2, 0, 0)>
+%endif
+%if SLibCG_ArgAccessed(2, 0, 0)
+%<SLibAccessArg(rtmArgSys.Interface.RTMArgDef, "Start", rtmArgSys.CurrentTID, SLibSystemFcnPeriodicRateGrouping(rtmArgSys, "Start"))>
+%endif
+%if (IsModelReferenceBaseSys(rtmArgSys) && (IsModelRefScalableBuild() || GenerateClassInterface))
+%<SLibCG_UndoAccessArg(2, 0, 0)>
+%endif
+%assign fcnProtoType = ""
+%openfile fcnProtoType
+static void soc0_CdegradeCalc_Start(\
+%assign comma = ""
+%if SLibCG_ArgAccessed(2, 0, 0)
+%<comma>%<tSimStructType> * const %<tSimStruct>\
+%assign comma = ", "
+%endif
+%<comma>B_CdegradeCalc_soc0_T *localB\
+%assign comma = ", "
+%closefile fcnProtoType
+%<SLibCG_SetFcnProtoType(2, 0, fcnProtoType)>
+%<LibSetSystemField(system, "CachedStartLocalVars", localVarDecl)>
+%endfunction

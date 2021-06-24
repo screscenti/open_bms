@@ -1,0 +1,65 @@
+%implements s13_b0_qospi_2_Outputs "C"
+
+%function Outputs(block, system) Output
+%assign cfgTxt = ""
+%openfile cfgTxt
+%assign localVarDecl = ""
+%openfile localVarDecl
+int32_T i;
+%closefile localVarDecl
+for (i = 0; i < 40; i++) {
+    /* Delay: '<S9>/Delay' incorporates:
+ *  Constant: '<S9>/Constant'
+ */
+    if (%<(SLibCG_SE(SLibCG_DWV(15, 0, 4, 1, "", -1, "", 0)))> != 0) {
+%<SLibCG_SetDWV(14, 0, 4, 40, "", -1, "i", 0, "%<(SLibCGIR_PV(13, 0, 4, 40, "", -1, "i", 0))>")>\
+    }
+    /* Sum: '<S9>/Sum' incorporates:
+ *  Delay: '<S9>/Delay'
+ *  Gain: '<S9>/Gain'
+ *  Gain: '<S9>/Gain1'
+ *  Product: '<S9>/Divide'
+ *  Product: '<S9>/Mul'
+ *  Sum: '<S9>/Subtract'
+ *  Sum: '<S9>/Subtract1'
+ */
+    localB->Sum[i] = (rtu_lastChgCCsoc[i] - rtu_lastChgInitsoc[i]) / (rtu_keyON_ocvsoc[i] - rtu_lastChgInitsoc[i]) * rtu_soh_C_factors[i] * (1.0 - %<(SLibCG_SE(SLibCGIR_PV(2, 0, 4, 1, "", -1, "", 0)))>) + %<(SLibCG_SE(SLibCGIR_PV(2, 0, 4, 1, "", -1, "", 0)))> * %<(SLibCG_SE(SLibCG_DWV(14, 0, 4, 40, "", -1, "i", 0)))>;
+    /* Update for Delay: '<S9>/Delay' */
+%<SLibCG_SetDWV(14, 0, 4, 40, "", -1, "i", 0, "localB->Sum[i]")>\
+}
+/* Update for Delay: '<S9>/Delay' */
+%<SLibCG_SetDWV(15, 0, 4, 1, "", -1, "", 0, "0U")>\
+%closefile cfgTxt
+%<cfgTxt>
+%assign rtmArgSys = ::CompiledModel.System[::CompiledModel.System[::CompiledModel.RTWCGModules.RTWCGModule[2].CGSystemIdx].NonInlinedParentSystemIdx]
+%if SysFcnArgNeeded("Output", rtmArgSys.Interface.RTMArgDef, rtmArgSys.CurrentTID, SLibSystemFcnPeriodicRateGrouping(rtmArgSys, "Output"))
+%<SLibCG_AccessArg(2, 2, 0)>
+%endif
+%if SLibCG_ArgAccessed(2, 2, 0)
+%<SLibAccessArg(rtmArgSys.Interface.RTMArgDef, "Output", rtmArgSys.CurrentTID, SLibSystemFcnPeriodicRateGrouping(rtmArgSys, "Output"))>
+%endif
+%if (IsModelReferenceBaseSys(rtmArgSys) && (IsModelRefScalableBuild() || GenerateClassInterface))
+%<SLibCG_UndoAccessArg(2, 2, 0)>
+%endif
+%assign fcnProtoType = ""
+%openfile fcnProtoType
+static void soc0_CdegradeCalc(\
+%assign comma = ""
+%if SLibCG_ArgAccessed(2, 2, 0)
+%<comma>%<tSimStructType> * const %<tSimStruct>\
+%assign comma = ", "
+%endif
+%<comma>const real_T rtu_keyON_ocvsoc[40]\
+%assign comma = ", "
+%<comma>const real_T rtu_lastChgInitsoc[40]\
+%assign comma = ", "
+%<comma>const real_T rtu_lastChgCCsoc[40]\
+%assign comma = ", "
+%<comma>const real_T rtu_soh_C_factors[40]\
+%assign comma = ", "
+%<comma>B_CdegradeCalc_soc0_T *localB\
+%assign comma = ", "
+%closefile fcnProtoType
+%<SLibCG_SetFcnProtoType(2, 2, fcnProtoType)>
+%<LibSetSystemField(system, "CachedOutputLocalVars", localVarDecl)>
+%endfunction

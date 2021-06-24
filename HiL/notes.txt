@@ -1,0 +1,2 @@
+1. oe_create_model('BMShil','dd', 'BMS','template', 'minimal','part', '01T-068883-000','issue', 1)
+2. oe_read_build_list('BMShil',1)
