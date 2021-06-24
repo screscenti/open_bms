@@ -64,6 +64,7 @@ void *VITM_malloc(SimStruct *rts)
   ssSetUserData(rts, lS);
 
   /* block I/O */
+  /* BMS-706 */
   {
     void *b = malloc(sizeof(B_VITM_T));
     ss_VALIDATE_MEMORY(rts,b);
