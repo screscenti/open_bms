@@ -1,3 +1,0 @@
-Name	Value	Units	Type	Accuracy	Min	Max	DeclFile	DefnFile	Description
-**									
-CCOk_stepSize	0.1	s	real_T	0.01					

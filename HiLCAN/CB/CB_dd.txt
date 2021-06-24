@@ -1,7 +1,0 @@
-Name	Value	Units	Type	Accuracy	Min	Max	DeclFile	DefnFile	Description
-**									
-cblk_stepSize	0.1	s	real_T	0.01					
-cblc_battChargingMode	5	none	real_T	1					
-cblc_voltThreshBalance	0.015	V	real_T	0.001					
-cblc_deltaSocThreshBalance	0.1	pct	real_T	0.1	0	1			
-cblc_socThreshBalance	50	pct	real_T	1	0	100			

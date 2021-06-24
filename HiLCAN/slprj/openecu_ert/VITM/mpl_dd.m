@@ -1,2 +1,0 @@
-dd_struct = { 'file', 'line', 'name', 'alt_ref', 'alt_ref_offset', 'value', 'units', 'description', 'type', 'accuracy', 'precision', 'min', 'max', 'x_axis', 'y_axis', 'enums', 'scale', 'offset' };
-clear dd_struct;
