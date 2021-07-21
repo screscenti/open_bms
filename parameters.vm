@@ -1,0 +1,25 @@
+# ==============================================================================
+## Date           Author         Change
+## -----------------------------------------------------------------------------
+## 26-Mar-2018    GDN          Initial Creation
+##
+## =============================================================================
+## Parameter for config report display  
+$parameters.put("witypes", $factory.enumeration("Work Item Type(s) to Report ", "workitem-type").allowMultipleValues(true).allowNoValue(true).build())
+
+$parameters.put("docTypes", $factory.enumeration("Document Type(s) to Report ", "documents/document-type").allowMultipleValues(true).allowNoValue(true).build())
+
+$parameters.put("testrunTypes", $factory.enumeration("Test run Type(s) to Report ", "testing/testrun-type").allowMultipleValues(true).allowNoValue(true).build())
+
+$parameters.put("displayDetails", $factory.customEnum("Details to be Displayed ").addEnumItem("allOOTBfields","OOTB fields").addEnumItem("enumerations","Enumerations").addEnumItem("linkedRoles","Link Roles").addEnumItem("customFields","Custom Fields").addEnumItem("workflow","Workflow").allowMultipleValues(true).allowNoValue(true).build())
+
+$parameters.put("ootbAllColumns", $factory.bool("Display All Columns for OOTB Fields").value(false).build())
+
+$parameters.put("customAllColumns", $factory.bool("Display All Columns for Custom Fields").value(false).build())
+
+$parameters.put("graphImage", $factory.bool("Display Graph as Image(yes) or as Canvas(no)").value(true).build())
+
+##Parameter for Access report
+$parameters.put("displayAccessReport", $factory.bool("Display Access Report").value(false).build())
+
+$parameters.put("reportType", $factory.customEnum("Access Details Report By").addEnumItem("Both","Both").addEnumItem("User","User").addEnumItem("Role","Role").singleValue("Both").allowMultipleValues(false).allowNoValue(false).build())
