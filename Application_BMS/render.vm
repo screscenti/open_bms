@@ -1,0 +1,2079 @@
+    ## ========================================================================
+    ## File Name: render.vm
+    ## Widget: Project Configuration Report
+    ## Description: Render project configuration report using html tables and graphs
+    ## 
+    ## --------------------------------------------------------------------------
+    ##           C H A N G E   H I S T O R Y
+    ##-------------------------------------------------------------------------
+    ## Date                Author                Description of Change
+    ##-------------------------------------------------------------------------
+    ## 26-May-2017       Ranjit                Initial Creation
+    ## 09-Jun-2017       Ranjit                Configuration options for field columns
+    ## 23-Jun-2017       Ranjit                Configuration options to display graph as image
+    ##                                            or canvas
+    ## 26-Jul-2017       Ranjit                Report Document fields and workflows
+    ## 27-Jul-2017       Ranjit                Use VisJS local resources to avoid dependency
+    ##                                         on Internet as well as https server
+    ## 01-Aug-2017       Ranjit                Do not display link roles for documents
+    ## 09-Mar-2018       Sailakshmi            Merging widgets of project configuration and access permissions
+    ## 26-Mar-2018       Sailakshmi            Modifications for selecting multiple prototypes
+    ## 22-May-2018       Ranjit                Update to avoid display of uninitialized variables and special chars
+    ##                                         Remove heading, change comments column to description column
+    ## 25-May-2018       JFThibeault           Fixing the TestRun Permission table 
+    ##                                         Changing Headings + Adding Type description 
+    ##                                         Fixing issue with status description not being reinitialized
+    ## ===================================================================================================
+    
+    #set($debug = false )
+    #set($q = '"') 
+    #set($enumsToReport = [])
+    #set($NO_DISPLAY = "none")
+    #set($ALL_DISPLAY = "all")
+    #set($ENUM_DISPLAY = "enum")    
+    #set($enumsNotToReport = ["work-item-type", "status"])
+    #set($customEnumsToReport = [] )
+    #set($displayAccessReport = false)
+    #set($stateTransitionMap = $objectFactory.newMap())
+    #set($type2GraphMap = $objectFactory.newMap())
+    #set($displayImage = $parameters.graphImage.value())
+    #set($ootbAllColumns = $parameters.ootbAllColumns.value())
+    #set($customAllColumns = $parameters.customAllColumns.value())
+    #set($selectedWiTypes = $parameters.witypes.values)
+    #set($selectedDocTypes = $parameters.docTypes.values)
+    #set($selectedTestrunTypes = $parameters.testrunTypes.values)
+    #set($SelectedDisplayDetails = $parameters.displayDetails.values)
+
+    #set($currProjectId = $page.reference.projectId )
+
+    ##access report 
+   #set($gPermissionsFilePath = "/.polarion/security/permissions.xml")
+   #set($customSetMap = $objectFactory.newMap())
+   #set($securityService = $trackerService.getSecurityService())
+   
+   #set($displayAccessReport = $parameters.displayAccessReport.value())
+   #set($reportType = $parameters.reportType.singleValue())
+   
+   #set($projectUsers = [] )
+   #set($projectRoles = [] )
+   
+   ## Global keys
+   #set ($workItemPermKey = "com.polarion.persistence.object.WorkItem")
+   #set ($modulePermKey = "com.polarion.persistence.object.Module")
+   #set ($objectCommentPermKey = "com.polarion.persistence.object.Comment")
+   #set ($moduleCommentPermKey = "com.polarion.persistence.object.ModuleComment")
+   #set ($testRunCommentPermKey = "com.polarion.persistence.object.TestRunComment")
+   #set ($planPermKey = "com.polarion.persistence.object.Plan" )
+   #set ($buildPermKey = "com.polarion.persistence.object.Build" )
+   #set ($reportPermKey = "com.polarion.persistence.object.Plan" )
+   #set ($baselinePermKey = "com.polarion.persistence.object.Baseline" )
+   #set ($reportPermKey = "com.polarion.reports.Plan" )
+   #set ($testrunPermKey = "com.polarion.persistence.object.TestRun" )
+   #set ($richpagePermKey = "com.polarion.persistence.object.RichPage" )
+   #set ($wikipagePermKey = "com.polarion.persistence.object.WikiPage" )
+        
+   #set($workItemPermissionTypes = ["read", "create", "modify", "delete", "vote", "watch", "approveDisapproveOthers", "approveDisapproveOthers", "resetApprovals" ]  )
+   #set($modulePermissionTypes = ["read", "create", "delete", "modifyFields", "modifyContent", "manageDocument", "sign", "manageSignatures" ] )
+   #set($objectCommentPermissionTypes = ["create", "key.resolved.modify"] )
+   #set($planPermissionTypes = ["read", "modify", "create", "delete"] )
+   #set($reportPermissionTypes = ["com.polarion.reports.read", "com.polarion.reports.update", "com.polarion.tracker.workreport.create" ] )
+   #set($buildPermissionTypes = ["com.polarion.persistence.object.Build.read", "com.polarion.persistence.object.Build.create", "com.polarion.builds.download" ] )
+   #set($baselinePermissionTypes = ["read", "modify", "create", "delete"] )
+   #set($testrunPermissionTypes = ["read", "modify", "create", "delete", "execute", "defineParameters", "addParameterToLibrary" ] )
+   
+       
+   ## Get All users assigned to the project
+   #set($projectId = $page.reference.projectId )
+   #set($projectService = $trackerService.getProjectService())
+   #set($project = $trackerService.getTrackerProject($projectId))
+   #set($users = $projectService.getProjectUsers($project))
+   
+   
+    #if($debug)
+        Widget Configuration <br>
+        OOTB Field Columns = $ootbAllColumns <br>
+        Custom Field Columns = $customAllColumns <br>
+        Graph as Image = $displayImage <br>
+        Project ID = $currProjectId <br>
+    #end
+
+     <style>
+       body {
+           font-size: 14px;
+       }
+  
+       .sample {
+               padding: 1em;
+               display: flex;
+               border: 2px solid black;
+       }
+
+       .sample__title {
+               margin-top: 0;
+       }
+
+       .sample__info {
+               background-color: #ddd;
+               vertical-align: top;
+               text-align: left;
+               padding: 0 0.5em 0 0;
+               margin: 0 1.3em 0 0;
+               font-weight: bold;
+               border-right: 1px dotted #EEE; //
+               border: 2px solid black;
+               width: 300px;
+               float: left;
+               height: 830px;
+       }
+       .enum-table-header-row > th{  
+               padding: 10px 6px 4px 5px;
+               background-color: #ddd;
+               text-align: left;
+               font-weight: bold;
+               border-bottom: 2px solid #8a8a5c;
+               border-top: 2px solid #8a8a5c;
+               border-left: 2px solid #8a8a5c;
+               border-right: 2px solid #8a8a5c;
+       }
+
+       .sample__ingredients {
+               float: left;
+               width: auto;
+               height: 830px;
+               overflow:auto;
+       }
+
+       .custom_feilds {
+               float: left;
+               width: 800px;
+               height: 300px;
+               overflow: auto;
+               //border: 1px solid black;
+       }
+
+       .sample-table {
+               padding: 1em 1em 1em 1em;
+               max-width: auto;
+               max-height: auto;
+               min-width: 0px;
+               min-height: 0px; //
+               border: 1px solid black;
+               border-collapse: collapse;
+               background-color: white;
+               table-layout: fixed;
+       }
+
+       .attributes-table {
+               padding: 1em 1em 1em 1em;
+               max-width: auto;
+               max-height: auto;
+               min-width: 0px;
+               min-height: 0px; //
+               border: 1px solid black;
+               border-collapse: collapse;
+               background-color: white;
+               table-layout: fixed;
+               overflow: auto;
+       }
+       .statuses {
+               float: left;
+               width: 800px;
+               height: auto;
+               overflow: auto;
+       }
+       .transitions {
+               float: left;
+               width: 800px;
+               height: auto;
+               overflow: auto;
+       }
+       .sample-table__cell {
+               vertical-align: top;
+               border: 1px solid black; //
+               max-width: 80px;
+       }
+
+       .sample__text-field {
+               margin: 0;
+               padding: .45em 0.92em;
+               font-size: 1em;
+               line-height: 1.4;
+               color: #555555;
+               background-color: #FFF;
+               background-image: none;
+               border: 1px solid #CCC;
+               border-left: 1px solid #CCC;
+       }
+
+       .select-list-content {
+               width: 150px;
+               border: none;
+               font-family: inherit;
+               font-size: inherit;
+               padding: 2px 2px 2px 2px;
+               margin-bottom: 4px
+       }
+
+       .sample-table__add-row {
+               margin-top: 0;
+               position: relative;
+               border: 1px solid white;
+       }
+
+       .childValues {
+               color: blue;
+       }
+
+       #workItemChildList li:hover, #workItemChildList li.selected {
+               color: white;
+       }
+       #documentTypesList li:hover, #workItemChildList li.selected {
+               color: white;
+       }
+       
+       svg {
+               overflow: hidden;
+       }
+
+       .node rect {
+             stroke: #111;
+             strokeWidth: 1.5px;
+             fill: #fff;
+       }
+       .node.selected rect {
+             fill: #f00;
+       }
+
+       .edgeLabel rect {
+             fill: #fff;
+       }
+       .edgePath {
+           stroke: #111;
+           strokeWidth: 1.0px; 
+           fill: none;
+           color: #f00;
+}
+
+#mynetwork {
+  position:fixed;
+  left: 50%;
+  margin-left: -400px;
+  width: 800px;
+  height: 600px;
+  border: 1px solid lightgray;
+}
+.graphh {
+    overflow: hidden;
+    width:800px;
+    height:400px;
+}
+
+@media print{
+@page
+        {
+            size: auto;   /* auto is the initial value */
+            margin: 0mm;  /* this affects the margin in the printer settings */
+        }
+  body{ background-color:#FFFFFF; background-image:none; color:#000000 }
+  .polarion-NavigationPanel{ display:none;}
+  .polarion-NavigationPanel:parent:parent{display:none;}
+  .polarion-PortalBaseSplitter:parent{display:none;}
+  .polarion-PortalBaseSplitter{display:none;}
+  .polarion-rp-column-container{ width:100%;}
+  
+   .polarion-rp-column-container
+    {
+     display: block !important;
+    }
+}
+
+
+##access report
+.table-header-rotated th.row-header{
+  width: auto;
+}
+
+.table-header-rotated td{
+ ## width: 40px;
+ ## border-top: 1px solid #dddddd;
+ ## border-left: 1px solid #dddddd;
+  border-right: 1px solid #dddddd;
+  vertical-align: middle;
+  text-align: middle;
+}
+
+.table-header-rotated th.hr{
+  height: 80px;
+  width: 40px;
+  min-width: 40px;
+  max-width: 140px;
+  position: relative;
+  border-top: 1px solid #dddddd;
+  border-left: 1px solid #dddddd;
+  vertical-align: middle;
+  padding: 0;
+  font-size: 12px;
+  line-height: 0.8;
+}
+.table-header-rotated td.hd{
+ ## height: 80px;
+  width: 40px;
+  min-width: 40px;
+  max-width: 140px;
+  position: relative;
+  border-top: 1px solid #dddddd;
+  border-left: 1px solid #dddddd;
+  vertical-align: middle;
+  padding: 0;
+  font-size: 12px;
+  }
+
+.table-header-rotated th.rotate-45{
+  height: 160px;
+  width: 40px;
+  min-width: 40px;
+  max-width: 40px;
+  position: relative;
+  border-top: 1px solid #dddddd;
+##  border-left: 1px solid #dddddd;
+  vertical-align: middle;
+  padding: 0;
+  font-size: 10px;
+  line-height: 0.8;
+}
+
+.table-header-rotated th.rotate-45 > div{
+  position: relative;
+  top: 0px;
+  left: 80px; /* 80 * tan(45) / 2 = 40 where 80 is the height on the cell and 45 is the transform angle*/
+  height: 100%;
+  -ms-transform:skew(-45deg,0deg);
+  -moz-transform:skew(-45deg,0deg);
+  -webkit-transform:skew(-45deg,0deg);
+  -o-transform:skew(-45deg,0deg);
+  transform:skew(-45deg,0deg);
+  overflow: hidden;
+  border-left: 1px solid #dddddd;
+  border-right: 1px solid #dddddd;
+  border-top: 1px solid #dddddd;
+}
+
+.table-header-rotated th.rotate-45 span {
+  -ms-transform:skew(45deg,0deg) rotate(315deg);
+  -moz-transform:skew(45deg,0deg) rotate(315deg);
+  -webkit-transform:skew(45deg,0deg) rotate(315deg);
+  -o-transform:skew(45deg,0deg) rotate(315deg);
+  transform:skew(45deg,0deg) rotate(315deg);
+  position: absolute;
+  bottom: 30px; /* 40 cos(45) = 28 with an additional 2px margin*/
+  left: -25px; /*Because it looked good, but there is probably a mathematical link here as well*/
+  display: inline-block;
+  width: 85px; /* 80 / cos(45) - 40 cos (45) = 85 where 80 is the height of the cell, 40 the width of the cell and 45 the transform angle*/
+  text-align: left;
+  }
+.widget-errors{
+    font-family:    Arial, Helvetica, sans-serif;
+    font-size:      16px;
+    color:          #ff0000;
+    background-color: yellow;
+}
+
+.center-align{
+ text-align:justify; 
+ -moz-text-align-last:center;
+ text-align-last: center;
+}
+</style>
+
+
+<style type="text/css" media="print">
+.dontprint
+{ display: none; }
+
+</style>
+        
+<body>
+    
+## -----------------------------------------------------------------
+## Macro Name:loadWidgetJsResource, loadWidgetCssResource
+## Description: These macros are used to load JS and CSS resources locally
+## Inputs     : JS/CSS file name
+## Output     : None
+## Return     : None
+## 
+## -----------------------------------------------------------------
+## <h2 class="center-align"> Project Configuration Report </h2>
+
+#macro(loadWidgetJsResource $js)
+   #loadJsResource($widgetContext.resourceUrl("$js"))
+#end
+#macro(loadJsResource $url)
+    <script type="text/javascript">
+        var xhrObj = new XMLHttpRequest();
+        xhrObj.open('GET', '$url', false);
+        xhrObj.send(null);
+        eval(xhrObj.responseText);
+    </script>
+#end
+#macro(loadWidgetCssResource $css)
+   #loadCssResource($widgetContext.resourceUrl("$css"))
+#end
+#macro(loadCssResource $url)
+    #set($cssId = $widgetContext.generateUniqueElementId())
+    <style id="$cssId">
+    </style>
+    <script type="text/javascript">
+        var xhrObj = new XMLHttpRequest();
+        xhrObj.open('GET', '$url;', false);
+        xhrObj.send(null);
+        document.getElementById("$cssId").innerHTML=xhrObj.responseText;
+    </script>
+#end
+     
+    #set ($sharedLocalization = $transaction.context().localization())
+    
+    #loadWidgetJsResource("resources/jquery.min.js")
+    #loadWidgetJsResource("resources/vis.min.js")
+    #loadWidgetCssResource("resources/vis-network.min.css") 
+               
+    ## ========================================================================
+    ##
+    ##
+    ## ========================================================================
+    #macro (GetClassNameFromString $classNameStr  $className )
+    
+       #set($index = $classNameStr.lastIndexOf(".")) 
+       #if($index >= 0 )
+          #set($index = $index + 1 )
+          #set($className = $classNameStr.substring($index))
+       #else
+          #set($className = "" )
+       #end
+    #end
+
+    ## ========================================================================
+    ##
+    ##
+    ## ========================================================================
+    #macro (GetListItemType $fldType $itemTypeStr $enumId  $refClass )
+       #set($listType = $fldType.getItemType())
+       #set($itemTypeClass = $listType.class.name )
+       #GetClassNameFromString($itemTypeClass $listTypeStr ) 
+       #set($refClass =  "" )
+       #set($enumId = "" )
+                  
+       #if($listTypeStr == "ReferenceType")
+           #set($refClass = $listType.getPrototype() )
+           #set($itemTypeStr = "Reference" )
+       #elseif($listTypeStr == "EnumType")
+           #set($enumId = $listType.getEnumerationId())       
+       #elseif($listTypeStr == "PrimitiveType")
+           #set($typeClassNameStr = $listType.getTypeName() )          
+           #GetClassNameFromString($classNameStr $itemTypeStr )
+       #else
+           #set($itemTypeStr = $listTypeStr )
+       #end       
+    #end
+           
+    ## ========================================================================
+    ##
+    ##
+    ## ========================================================================        
+    #macro(DisplayOOTBFields $subtype $prototypeModel)
+    
+       #set($prototype = $trackerService.getDataService().getPrototype($prototypeModel))
+       #set($ootbKeys = $prototype.getKeyNames())
+             
+       <table class="polarion-rpw-table-content">
+          <thead>                                                                 
+             <tr class="polarion-rpw-table-header-row">
+                #if($ootbAllColumns)
+                   <th>ID</th>
+                #end
+                <th>Name</th>
+                <th>Type</th>
+                <th>Enumeration</th>
+                #if($ootbAllColumns)
+                    <th>Reference Class</th>
+                    <th>Is Array</th>
+                    <th>Is Required</th>
+                    <th>Is Read-only</th>
+                #end
+             </tr>   
+          </thead>
+       
+       #foreach($keyId in $ootbKeys )
+          #set($typeStr = "" )
+          #set($enumId = "" )
+          #set($protoTypeId = "" )
+          #set($fieldLabel = "")
+          #set($isArray = false )
+          #set($isRequired = false)
+          #set($isReadonly = false )
+                                
+          <tr class="polarion-rpw-table-content-row" >
+          #if($ootbAllColumns)
+             <td>$keyId</td>
+          #end
+          
+          #set($fieldLabel = $sharedLocalization.getFieldLabel( $prototypeModel, $keyId ))
+          <td>$!fieldLabel</td>
+          #set($keyType = $prototype.getKeyType($keyId))          
+          
+          #set($typeClass  = $keyType.class.name )
+          #if($typeClass == "com.polarion.subterra.base.data.model.internal.EnumType")
+              #set($typeStr = "Enum" )
+              #set($enumId = $keyType.getEnumerationId())
+          #elseif ($typeClass == "com.polarion.subterra.base.data.model.internal.PrimitiveType" )
+              #set($classNameStr = $keyType.getTypeName() ) ## typeClass.substring(indexOfDot )
+              #set($typeStr = $keyType.getSubtype())
+              #GetClassNameFromString($classNameStr $typeStr )  
+          #elseif ($typeClass == "com.polarion.subterra.base.data.model.internal.ReferenceType" ) ## IReferenceType
+              #set($typeStr = "Reference" )
+              #set($enumId = $keyType.getEnumerationId())
+              #set($protoTypeId = $keyType.getPrototype())
+          #elseif ( $typeClass == "com.polarion.subterra.base.data.model.internal.StructType" ) ## IStructType
+              ##set($typeStr = "Structure" )
+              #set($enumId = $keyType.getStructTypeId())
+          #elseif ( $typeClass == "com.polarion.subterra.base.data.model.internal.ListType" ) ## instanceof IListType
+              #set($typeStr = $keyType.getListTypeId())
+              #GetListItemType ($keyType $typeStr $enumId $protoTypeId )
+              #set($isArray = true )
+              ##set($enumId = $keyType.getListTypeId())
+          #elseif ( $typeClass == "com.polarion.subterra.base.data.model.internal.CodeType" )  ## ICodeType ) {
+              #set($typeStr = "Code" )
+              #set($enumId = $keyType.getCodeTypeId())
+          #end
+          
+          #set($isRequired = $prototype.isKeyRequired($keyId))
+          #set($isReadonly = $workitemProto.isKeyReadOnly($keyId)) 
+          <td>$!typeStr</td>
+          #if($typeStr == "Enum" || $typeStr == "Code" )
+             <td>$!enumId</td>            
+          #else
+             <td></td>
+          #end
+          
+          #if($ootbAllColumns)
+              #if($typeStr == "Reference" )
+                 <td>$!protoTypeId</td>
+              #else
+                 <td></td>
+              #end            
+              <td>$!isArray</td>
+              <td>$!isRequired</td>
+              <td>$!isReadonly</td>
+          #end
+          </tr>
+          
+       #end
+       </table>
+       #end
+    
+     ## ========================================================================
+     ##
+     ##
+     ## ========================================================================
+     #macro(DisplayCustomFields $subtype $prototypeModel)
+         
+       #set($customFieldsData = $trackerService.getDataService().getCustomFieldsService().getCustomFields($prototypeModel, $contextId, $subtype))
+       
+    #if($customFieldsData.size() > 0)      
+        
+       <table class="polarion-rpw-table-content" >
+          <thead>                                                                 
+             <tr class="polarion-rpw-table-header-row" > ## enum-table-header-row">
+                #if($customAllColumns)
+                   <th>ID</th>
+                #end
+                <th>Name</th>
+                <th>Type</th>
+                <th>Enumeration</th>
+                #if($customAllColumns)
+                    <th>Reference Class</th>
+                    <th>Is Array</th>
+                    <th>Is Required</th>
+                    <th>Is Read-only</th>
+                #end
+                 <th>Description</th>
+             </tr>   
+          </thead>
+       
+       
+       #foreach($customFld in $customFieldsData )
+          <tr class="polarion-rpw-table-content-row" >
+          #set($typeStr = "" )
+          #set($enumId = "" )
+          #set($protoTypeId = "" )
+          #set($isRequired = false ) 
+          #set($isReadOnly = false )
+        
+          #set($isRequired = $customFld.isRequired())
+          ## #set($isReadonly = $workitemProto.isKeyReadOnly($keyId))  
+          #set($isArray = $customFld.isMulti() )
+          #set($fldType = $customFld.getType())   
+          #set($fldDesc = $customFld.getDescription())        
+                  
+          #set($fieldName = $customFld.getName())
+          ##set($enumId = $fldType.getEnumerationId())                                
+          
+          #set($fldTypeClass = $fldType.class.name ) 
+          #if($fldTypeClass == "com.polarion.subterra.base.data.model.internal.EnumType")
+              #set($typeStr = "Enum" )
+              #set($enumId = $fldType.getEnumerationId())             
+          #elseif ($fldTypeClass == "com.polarion.subterra.base.data.model.internal.PrimitiveType" )
+              #set($typeClassName = $fldType.getTypeName() ) ## typeClass.substring(indexOfDot )
+              #GetClassNameFromString($typeClassName $typeStr )
+              #if($typeStr.equals("String"))
+                 #set($typeStr = $fldType.getTypeId())
+              #end
+          #elseif ($fldTypeClass == "com.polarion.subterra.base.data.model.internal.ReferenceType" ) ## IReferenceType ) {
+              #set($typeStr = "Reference" )
+              #set($protoTypeId = $fldType.getPrototype())             
+          #elseif ( $fldTypeClass == "com.polarion.subterra.base.data.model.internal.StructType" ) ## IStructType ) {
+              #set($typeStr = "Structure" )
+              #set($enumId = $fldType.getStructTypeId())
+          #elseif ( $fldTypeClass == "com.polarion.subterra.base.data.model.internal.ListType" ) ## instanceof IListType
+              #GetListItemType ($fldType $typeStr $enumId $protoTypeId )
+              #set($isArray = true )
+              #set($enumId = $fldType.getListTypeId())
+          #elseif ( $fldTypeClass == "com.polarion.subterra.base.data.model.internal.CodeType" )  ## ICodeType ) {
+              #set($typeStr = "Code" )
+              #set($enumId = $fldType.getCodeTypeId())            
+          #else
+              #set($typeClassName = $fldType.getTypeName() ) ## typeClass.substring(indexOfDot )
+              #GetClassNameFromString($typeClassName $typeStr )
+          #end         
+          
+                                
+          #if($customAllColumns)
+             <td>$customFld.getId() </td>
+          #end
+          
+          <td>$!fieldName </td>
+          <td>$!typeStr</td>       
+          <td>$!enumId</td>
+          #if($customAllColumns)
+              <td>$!protoTypeId</td>
+              <td>$!isArray</td>
+              <td>$!isRequired</td>
+              <td>$!isReadonly</td>
+          #end
+          <td>$!fldDesc</td>
+          </tr>
+       #end
+       
+       </table>
+       
+     #else
+     <br><b>No Custom Fields to display</b><br>
+     #end
+    
+    #end
+    
+    ## ========================================================================
+    ##
+    ##
+    ## ========================================================================
+    #macro(GetStatusDetails $typeSelected $wfGraphData $prototypeModel )  
+            
+       #set($contextId = $trackerService.getTrackerProject($currProjectId).contextId)       
+        
+       #set($myEnum = $trackerService.getDataService().getEnumerationForKey($prototypeModel, "status", $contextId))    
+       #set($statusOptions = $myEnum.getAvailableOptions($typeSelected))
+       
+       <h4><b> Status List </b></h4>
+       <table class="polarion-rpw-table-content" >
+       <tr> <td>
+       <table class="polarion-rpw-table-content">
+       <tbody>
+       <thead>
+           <tr class="polarion-rpw-table-header-row" >
+              <th>ID</th>
+              <th>Name</th>
+              <th>Icon</th>
+              <th>Description</th>
+           </tr>   
+       </thead>
+       
+       #set($statusIdList = [] )
+       #set($statusNameList = [] )
+       #set($statusIconList = [] )
+       
+       #foreach( $statusOption in $statusOptions )
+           #set($statusId = "" )
+           #set($statusName = "" )
+           #set($statusIcon = "" )
+           #set($statusDesc = "" )
+
+           #set($statusId = $statusOption.getId())  
+           #set($statusName = $statusOption.getName())
+           #set($statusDesc = $statusOption.getProperty("description"))
+           #set($statusIcon= $statusOption.getProperty("iconURL"))                           
+           #set($void = $statusIdList.add( $statusId ))
+           #set($void = $statusNameList.add( $statusName ))
+           #set($void = $statusIconList.add( $statusIcon ))
+           
+           <tr class="polarion-rpw-table-content-row" >             
+             <td>$statusId</td>
+             <td>$!statusName</td>                                                                                               
+             <td><img src="$statusIcon"></td>
+             <td>$!statusDesc</td>
+           </tr>
+       #end
+       </table>
+       </td>
+       <td>
+         <div id='$typeSelected' class='graphh'></div>
+      </td>
+      </tr>
+      </table>     
+     
+      <br>
+       
+      #set($graphData = "" ) 
+      #set($nodes = "[" ) 
+      #set($edges = "[" ) 
+      #set($workflowMgr = $trackerService.getWorkflowManager())
+      #set($workflowConfig = $workflowMgr.getWorkflowConfig( $prototypeModel, $typeSelected, $contextId ))
+      #set($transitions = $workflowConfig.getTransitions())
+      #set($actionMatrix = [] )
+   
+      ## Add statuses to graph
+      #set($sIndex = 0)
+      #foreach($statusName in $statusNameList )
+         #set($sId = $statusIdList.get($sIndex))
+         #set($graphData = "${graphData}   $sId [label=")
+         #set($graphData = "${graphData}${q}${statusName}${q}]; ")
+         #set($sIndex = $sIndex + 1 )
+      #end
+    
+      #foreach ($transition in $transitions ) 
+            #set($node = "" ) 
+            #set($edge = "" )
+            
+            #set($actionId = $transition.getActionId())
+            
+            #set($fromState = $transition.getFromState())
+            #set($fromNode = "{${q}id${q}:${q}$transition.getFromState()${q},${q}label${q}:${q}$transition.getFromState()${q}},")
+            #if(!$nodes.toString().contains($fromNode.toString))
+                  #set($nodes = "${nodes} ${fromNode}" )
+            #end
+            
+            #set($toState = $transition.getToState())
+            #set($toNode = "{${q}id${q}:${q}$transition.getToState()${q},${q}label${q}:${q}$transition.getToState()${q}},")
+            #if(!$nodes.toString().contains($toNode.toString))
+                #set($nodes = "${nodes} ${toNode}" )
+            #end
+            
+            #set($edge = "${edge} {${q}from${q}:${q}$transition.getFromState()${q}," )          ## Egde json start          
+            
+            #set($edge = "${edge}${q}to${q}:${q}$transition.getToState()${q}," )            
+            #set($graphData = "${graphData} [label=" )                                          
+            
+            #set($actionName = $workflowConfig.getTransitionAction( $fromState, $toState ).getName())       
+            #set($graphData = "${graphData}${q}${actionId}${q}")
+            #set($edge = "${edge}${q}label${q}:${q}${actionName}${q}}," )                         ## Egde json end
+            #set($edges = "${edges} ${edge}" )          
+            #set($graphData = "${graphData}];" )
+                                
+            #set($transitionKey = "${fromState}" )
+
+            #set($transitionKey = "${transitionKey}-" )
+            #set($transitionKey = "${transitionKey}${toState}")
+            #set($void = $stateTransitionMap.put($transitionKey, $actionName))
+          
+       #end  
+       
+       #set($edgeLength = $edges.length() - 1)
+       #set($edges = $edges.toString().substring(0,$edgeLength))
+        
+       #set($nodeLength = $nodes.length() - 1)
+       #set($nodes = $nodes.toString().substring(0,$nodeLength))
+       
+       ## setting nodes and edges data for each graph/workitem type
+       #set($nodes = "${nodes}]" )
+       #set($edges = "${edges}]" )
+       <script>
+     
+        var _nodes$typeSelected = '${nodes}';
+        var _edges$typeSelected = '${edges}';
+       </script>
+        
+          
+       #set($wfGraphData = $graphData )
+      
+       ## Display State Transition Map     
+       <h4><b> Status Transition Matrix </b></h4>
+       <table class="polarion-rpw-table-content" >
+       <tbody>
+       <thead>
+           <tr class="polarion-rpw-table-header-row" >
+                <th> </th>
+                #set($sIndex = 0 )
+                #foreach($sName in $statusNameList )
+                   #set($sIcon = $statusIconList.get($sIndex ))
+                   <th>$sName <img src="$sIcon"></th>
+                   #set($sIndex = $sIndex + 1)
+                #end
+           </tr>
+       </thead>
+          #set($cIndex = 0 )
+          #foreach($cName in $statusIdList )
+             
+             #set($cIcon = $statusIconList.get($cIndex ))
+             #set($sName = $statusNameList.get($cIndex ))
+             <tr class="polarion-rpw-table-content-row" >
+                <th>$sName <img src="$cIcon"></th>
+                #set($rIndex = 0 )
+                #foreach($rId in $statusIdList )
+                   #set($transitionId = "")
+                   #set($tranKey = "${cName}" )
+                   #set($tranKey = "${tranKey}-" )
+                   #set($tranKey = "${tranKey}${rId}")
+                   #set($rIndex = $rIndex + 1)
+                
+                   #set($transitionId = $stateTransitionMap.get($tranKey ))
+                   
+                   <td>$transitionId</td>
+                #end
+                
+             </tr> 
+             #set($cIndex = $cIndex + 1 )
+          #end   
+          </table>                      
+       
+       #end   
+
+    ## =========================================================================================
+    ##
+    ## 
+    ## ==========================================================================================
+ #macro ( GetlinkRoleDetails $subType $allWorkItemTypes $linkRoleGrpahId $prototypeModel)  
+        ## Get all link roles in the project
+        #set($linkRoleEnum = $currentProject.getWorkItemLinkRoleEnum() )                                
+        #set($linkRoleOptions = $linkRoleEnum.getAvailableOptions($linkRoleEnum.getControlKey()) ) 
+        
+        #set($nodesList = [] )
+        #set($edgesList = [] )
+
+        #foreach($wiType in $allWorkItemTypes )   
+           #if($subType.equals($wiType.id) )
+              #if(!$nodesList.contains($wiType))
+                  #set($void = $nodesList.add($wiType))
+              #end
+           #end
+
+           #foreach($lrOpt in $linkRoleOptions )                
+           
+              ## Check valid link roles from this type
+              #if($lrOpt.isAllowed($subType, $wiType.id ) )
+                 ## $name is Allowed from $subType to $wiType.id  <br>
+                 #set($name = $lrOpt.name )
+                 #set($oppName = $lrOpt.oppositeName )
+                 #if(!$nodesList.contains($wiType))
+                    #set($void = $nodesList.add($wiType))
+                 #end
+                 
+                 ## add to edges list                    
+                 #set($dirEdge = "{${q}from${q}:${q}${subType}${q}, ${q}to${q}:${q}$wiType.id${q}, ${q}label${q}:${q}${name}${q}}" )
+                 #set($oppEdge = "{${q}from${q}:${q}$wiType.id${q}, ${q}to${q}:${q}${subType}${q}, ${q}label${q}:${q}${oppName}${q}}" )
+                 #set($void = $edgesList.add($dirEdge) )
+                 #set($void = $edgesList.add($oppEdge) )
+              #end
+           #end
+        #end
+        
+        ## create JSON
+        #set($linknodes = "[" ) 
+        #set($linkedges = "[" ) 
+        
+        #set($firstNode = true )
+        #set($firstEdge = true )
+        
+        #foreach($node in $nodesList )
+            #if($prototypeModel == "WorkItem" )
+                #set($nodeName = $node.name )
+            #else
+                #set($nodeName = $node.label() )
+            #end
+            
+            #set($nodeStr = "{${q}id${q}:${q}$node.id${q},${q}label${q}:${q}$nodeName${q}}")
+            #if($firstNode )
+               #set($firstNode = false )
+               #set($linknodes = "${linknodes} ${nodeStr}" )
+            #else
+               #set($linknodes = "${linknodes}, ${nodeStr}" )
+            #end        
+        #end
+        
+        #foreach($edgeStr in $edgesList )           
+            #if($firstEdge )
+               #set($firstEdge = false )
+               #set($linkedges = "${linkedges} ${edgeStr}" )
+            #else
+               #set($linkedges = "${linkedges}, ${edgeStr}" )
+            #end        
+        #end
+        
+            
+        <div id='$linkRoleGrpahId' class='graphh'"></div>
+        ## setting nodes and edges data for each graph/workitem type               
+       
+        ## setting nodes and edges data for each graph/workitem type
+        #set($linknodes = "${linknodes}]" )
+        #set($linkedges = "${linkedges}]" )  
+       
+        ## <br> << '_nodes$linkRoleGrpahId' >> $linknodes  ++ $linkedges <br>
+       
+        <script>
+        var _nodes$linkRoleGrpahId = '${linknodes}';
+        var _edges$linkRoleGrpahId = '${linkedges}';
+        ## console.log('variable = ' + nodes$linkRoleGrpahId );
+        </script>
+    #end  
+    
+    
+    #macro (GetEnumOptions $enumId $options )
+        #set($enums = $transaction.enumerations().definedEnumerations().forProject($currProjectId))
+        #set($options = [] )
+        
+        #foreach($enum in $enums )
+          #if($enum.label() == $enumId )         
+            #foreach($eOpt in $enum.options())
+               #set($void = $options.add($eOpt)) 
+            #end
+          #end
+        #end    
+    #end
+    
+    ## =========================================================================================
+    ##
+    ## 
+    ## ==========================================================================================
+    #macro (renderEnumById $proto $type $enumId )
+     #set( $enum = $trackerService.getDataService().getEnumerationForKey($proto, $key, $contextId ))
+     #set($availableEnumOptions = $enum.getAvailableOptions($type))
+     
+     <table class="polarion-rpw-table-content">
+          <thead>                                                                 
+             <tr class="polarion-rpw-table-header-row">
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Icon</th>           
+                    <th>Default</th>
+                    <th>Hidden</th>             
+                    <th>Color</th>
+                    <th>Description</th>
+            </tr>     
+          </thead>                              
+        
+       ## Get enumeration options
+       #set($sortOrder = 0)
+       #set($numOfOptions = 0)
+       #set($numOfOptions = $availableEnumOptions.size())
+
+       #if($numOfOptions > 0 )
+       #foreach($index in [1..$numOfOptions])      
+           #set($sortOrder = $sortOrder + 1)           
+           #foreach($option in $availableEnumOptions)
+              #set($optId = "")
+              #set($optName = "")
+              #set($optIcon = "")
+              #set($optDesc = "")
+              #set($optColor = "")
+              
+              #set($optId = $option.id)
+              #set($optName = $option.name)
+              #set($optIcon = $option.getProperty("iconURL"))
+              #set($optHidden = $option.isHidden())
+              #set($optDefault = $option.isDefault())
+              #set($optDesc = $option.getProperty("description"))
+              #set($optColor = $option.fgetProperty("color"))
+              #set($optOrder = $option.getSequenceNumber())
+              
+              #if( $sortOrder == $optOrder )
+
+                  <tr class="polarion-rpw-table-content-row" >                          
+                        <td style="width:120px;">
+                            $optId
+                        </td>
+                        <td style="width:120px;">
+                            $optName
+                        </td>
+                        
+                        <td style="width:120px;">
+                            <img src="$optIcon">                         
+                        </td>       
+                        
+                        <td>        
+                            #if($optDefault == true)                
+                               <input type="checkbox" name="DefaultOpt" checked>
+                            #else
+                               <input type="checkbox" name="DefaultOpt">
+                            #end
+                        </td>
+                        <td>                
+                            #if($optHidden == true)             
+                               <input type="checkbox" name="HiddenOpt" checked>
+                            #else
+                               <input type="checkbox" name="HiddenOpt">
+                            #end
+                        </td>
+                        <td>
+                            $optColor
+                        </td>
+                        <td style="width:120px;">
+                            $optDesc
+                        </td>        
+                    </tr>
+                #end                
+           #end
+           
+        #end
+        #end
+        </table>        
+     #end
+     
+     ## =========================================================================================
+    ##
+    ## 
+    ## ==========================================================================================
+    #macro (renderEnumByType $enumType )
+     #set( $enum = $trackerService.getDataService().getEnumerationForEnumId($enumType, $contextId ))
+     #set($availableEnumOptions = $enum.getAvailableOptions($enum.getControlKey()))
+     
+     <table class="polarion-rpw-table-content">
+          <thead>                                                                 
+             <tr class="polarion-rpw-table-header-row">
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Icon</th>           
+                    <th>Default</th>
+                    <th>Hidden</th>             
+                    <th>Color</th>
+                    <th>Description</th>
+            </tr>     
+          </thead>                              
+        
+       ## Get enumeration options
+       #set($sortOrder = 0)
+       #set($numOfOptions = 0)
+       #set($numOfOptions = $availableEnumOptions.size())
+
+       #if($numOfOptions > 0 )
+       #foreach($index in [1..$numOfOptions])      
+           #set($sortOrder = $sortOrder + 1)           
+           #foreach($option in $availableEnumOptions)
+              #set($optId = "")
+              #set($optName = "")
+              #set($optIcon = "")
+              #set($optDesc = "")
+              #set($optColor = "")
+              
+              #set($optId = $option.id)
+              #set($optName = $option.name)
+              #set($optIcon = $option.getProperty("iconURL"))
+              #set($optHidden = $option.isHidden())
+              #set($optDefault = $option.isDefault())
+              #set($optDesc = $option.getProperty("description"))
+              #set($optColor = $option.fgetProperty("color"))
+              #set($optOrder = $option.getSequenceNumber())
+             ## $optDefault == $optHidden == $optOrder
+              #if( $sortOrder == $optOrder )
+
+                  <tr class="polarion-rpw-table-content-row" >                          
+                        <td style="width:120px;">
+                            $optId
+                        </td>
+                        <td style="width:120px;">
+                            $optName
+                        </td>
+                        
+                        <td style="width:120px;">
+                            <img src="$optIcon">                         
+                        </td>       
+                        
+                        <td>        
+                            #if($optDefault == true)                
+                               <input type="checkbox" name="DefaultOpt" checked>
+                            #else
+                               <input type="checkbox" name="DefaultOpt" >
+                            #end
+                        </td>
+                        <td>                
+                            #if($optHidden == true)             
+                               <input type="checkbox" name="HiddenOpt" checked>
+                            #else
+                               <input type="checkbox" name="HiddenOpt">
+                            #end
+                        </td>
+                        <td>
+                            $optColor
+                        </td>
+                        <td style="width:120px;">
+                            $optDesc
+                        </td>        
+                    </tr>
+                #end                
+           #end
+           
+        #end
+        #end
+        </table>        
+     #end
+    
+    ## =========================================================================================
+    ##
+    ## 
+    ## ==========================================================================================
+    #macro (renderEnumOptions $enum )    
+     
+     #set($availableEnumOptions = $enum.options())
+     
+     <table class="polarion-rpw-table-content">
+          <thead>                                                                 
+             <tr class="polarion-rpw-table-header-row">
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Icon</th>           
+                    <th>Default</th>
+                    <th>Hidden</th>             
+                    <th>Color</th>
+                    <th>Description</th>
+            </tr>      
+          </thead>                              
+        
+       ## Get enumeration options
+       #set($sortOrder = 0)
+       #set($numOfOptions = 0)
+       #set($numOfOptions = $availableEnumOptions.size())
+
+       #if($numOfOptions > 0 )       
+           #set($defaultOpt = $enum.defaultOption())       
+           #foreach($option in $availableEnumOptions)
+              #set($optId = "")
+              #set($optName = "")
+              #set($optIcon = "")
+              #set($optDesc = "")
+              #set($optColor = "")
+              #set($optDefault = false )
+              
+              #if($option.id() == $defaultOpt.id() )
+                 #set($optDefault = true )
+              #end
+              
+              #set($optId = $option.id())
+              #set($optName = $option.label())
+              #set($optIcon = $option.fields().iconURL().url())
+              #set($optHidden = $option.fields().hidden().get())
+              
+              #set($optDesc = $option.fields().description().get())
+              #set($optColor = $option.fields().color().get())
+              ## #set($optOrder = $option.fields().get("sortOrder"))
+              
+              ##if( $sortOrder == $optOrder )
+
+                  <tr class="polarion-rpw-table-content-row" >                          
+                        <td style="width:120px;">
+                            $optId
+                        </td>
+                        <td style="width:120px;">
+                            $optName
+                        </td>
+                        
+                        <td style="width:120px;">
+                            <img src="$optIcon">                         
+                        </td>       
+                        
+                        <td>        
+                            #if($optDefault == true)                
+                               <input type="checkbox" name="DefaultOpt" checked>
+                            #else
+                               <input type="checkbox" name="DefaultOpt">
+                            #end
+                        </td>
+                        <td>                
+                            #if($optHidden == true)             
+                               <input type="checkbox" name="HiddenOpt" checked>
+                            #else
+                               <input type="checkbox" name="HiddenOpt">
+                            #end
+                        </td>
+                        <td>
+                            $optColor
+                        </td>
+                        <td style="width:120px;">
+                            $optDesc
+                        </td>        
+                    </tr>
+                ##end               
+           #end
+           
+        #end
+        </table>        
+     #end
+    
+    
+    #macro(DisplayOOTBFieldEnums $subtype  $prototypeModel)
+      
+       #set($prototype = $trackerService.getDataService().getPrototype( $prototypeModel))
+       #set($ootbKeys = $prototype.getKeyNames())
+       #set($enumsToReport = [])
+      
+       #foreach($keyId in $ootbKeys )
+            #set($enumId = "" )    
+              
+            #set($keyType = $prototype.getKeyType($keyId)) 
+            #set($typeClass  = $keyType.class.name )
+       
+            #if($typeClass == "com.polarion.subterra.base.data.model.internal.EnumType")
+                  #set($enumId = $keyType.getEnumerationId())
+              #elseif ($typeClass == "com.polarion.subterra.base.data.model.internal.ReferenceType" ) ## IReferenceType           
+                  #set($enumId = $keyType.getEnumerationId())
+              #elseif ( $typeClass == "com.polarion.subterra.base.data.model.internal.StructType" ) ## IStructType
+                  ##set($enumId = $keyType.getStructTypeId())
+              #elseif ( $typeClass == "com.polarion.subterra.base.data.model.internal.ListType" ) ## instanceof IListType           
+                  #GetListItemType ($keyType $typeStr $enumId $protoTypeId )                    
+              #elseif ( $typeClass == "com.polarion.subterra.base.data.model.internal.CodeType" )  ## ICodeType ) {
+                  #set($enumId = $keyType.getCodeTypeId())
+            #end
+        
+            #if(!$enumId.equals(""))
+                  #if($enumId.indexOf("@") == -1 && !$enumsNotToReport.contains($enumId))
+                    #set($enumKey = "${subtype}:${keyId}:${prototypeModel}")
+                    #set($void = $enumsToReport.add($enumKey))
+                    ##set($void = $enumsToReport.add($enumId))
+                  #end
+            #end
+            
+        #end
+    #end
+    
+    #macro(DisplayCustomFieldEnums $subtype  $prototypeModel)
+     
+        #set($customFieldsData = $trackerService.getDataService().getCustomFieldsService().getCustomFields( $prototypeModel, $contextId, $subtype))
+        #set($customEnumsToReport = [])
+          
+		#foreach($customFld in $customFieldsData )
+		  
+		   #set($enumId = "" )       
+		   #set($fldType = $customFld.getType())                                 
+		  
+		   #set($fldTypeClass = $fldType.class.name ) 
+		  
+		   #if($fldTypeClass == "com.polarion.subterra.base.data.model.internal.EnumType")
+			   #set($enumId = $fldType.getEnumerationId()) 
+		   #elseif ( $fldTypeClass == "com.polarion.subterra.base.data.model.internal.ListType" ) ## instanceof IListType
+			   #GetListItemType ($fldType $typeStr $enumId $protoTypeId )
+		   #elseif ( $fldTypeClass == "com.polarion.subterra.base.data.model.internal.CodeType" )  ## ICodeType  
+			   #set($enumId = $fldType.getCodeTypeId())                    
+		   #end
+		  
+		   #if(!$enumId.equals(""))
+			   #if($enumId.indexOf("@") == -1 && !$enumsNotToReport.contains($enumId))
+				  #set($keyId = $customFld.getId())
+				  #if($fldTypeClass == "com.polarion.subterra.base.data.model.internal.ListType")
+					#set($eType = $customFld.getType().getItemType())
+					#set($void = $customEnumsToReport.add($eType))
+				  #else
+					#set($eType = $customFld.getType())
+					#set($void = $customEnumsToReport.add($eType))
+				  #end
+			   #end
+		   #end             
+              
+        #end
+    #end
+    
+    
+     ## ========================================================================
+     ## PERMISSIONS REPORT MACROS
+     ##
+     ## ========================================================================
+   
+   ## Get all Custom Sets by WorkItem, Document or others
+   #macro (GetCustomSets $permissionsFilePath $protoType )
+      #set($repoService = $polarionTool.repositoryService)
+      #set($connection = $repoService.getReadOnlyConnection($polarionTool.location))
+      #set($fileLocation = $polarionTool.location.getLocation($permissionsFilePath)) 
+      #if($connection.isFile($fileLocation))    
+        #set($input = $connection.getContent($fileLocation))
+        #set($doc = $xmlTool.documentBuilderFactory.newDocumentBuilder().parse($input))        
+        #set($csNodes = $doc.getDocumentElement().getElementsByTagName("customset"))
+        #set($length = $csNodes.getLength() - 1)
+
+        #foreach($index in [0..$length] )
+           #set($csNode = $csNodes.item($index))
+           #set($attrs = $csNode.getAttributes())
+           #set($attrLength = $attrs.getLength())
+           #set($idNode = $attrs.getNamedItem("id").getNodeValue())
+           #set($titleNode = $attrs.getNamedItem("title").getNodeValue())   
+           #if($idNode.startsWith($protoType))
+               #if(!$customSetMap.containsKey($idNode))
+                 #set($oldValue=$customSetMap.put($idNode,$titleNode))
+               #end
+           #end
+        #end           
+      #end     
+   #end
+   
+
+    
+   #macro ( ReportBaselinePermissions $byRole $projectContextId )
+      #GetCustomSets($gPermissionsFilePath "Baseline_" )
+      #GetCustomSets($prjPermissionsFilePath "Baseline_" )
+      
+      #displayPlanPermissionsHeader( $byRole )
+      
+      #foreach($customSet in $customSetMap.entrySet())
+         #AddCategoryRow( $customSet.value "Baselines" $baselinePermissionTypes false )
+         #ReportPermissionsByAccessor( $byRole $projectContextId $customSet.key $baselinePermKey $baselinePermissionTypes false false ) 
+      #end  
+      #AddCategoryRow( "" "Baselines" $baselinePermissionTypes false )
+      #ReportPermissionsByAccessor( $byRole $projectContextId "" $baselinePermKey $baselinePermissionTypes false false )
+      
+   #end
+   
+   #macro ( ReportTestRunPermissions $byRole $projectContextId )
+      #GetCustomSets($gPermissionsFilePath "TestRun_" )
+      #GetCustomSets($prjPermissionsFilePath "TestRun_" )
+      
+      #displayTestRunPermissionsHeader( $byRole )
+      
+      #foreach($customSet in $customSetMap.entrySet())
+         #AddCategoryRow( $customSet.value "TestRuns" $testrunPermissionTypes $objectCommentPermissionTypes )
+         #ReportPermissionsByAccessor( $byRole $projectContextId $customSet.key $testrunPermKey $testrunPermissionTypes $testRunCommentPermKey $objectCommentPermissionTypes ) 
+      #end  
+      #AddCategoryRow( "" "TestRuns" $testrunPermissionTypes $objectCommentPermissionTypes )
+      #ReportPermissionsByAccessor( $byRole $projectContextId "" $testrunPermKey $testrunPermissionTypes $testRunCommentPermKey $objectCommentPermissionTypes )
+      
+   #end
+   
+   #macro ( ReportReportPermissions $byRole $projectContextId )
+      #GetCustomSets($gPermissionsFilePath "Report_" )
+      #GetCustomSets($prjPermissionsFilePath "Report_" )
+      
+      #displayReportPermissionsHeader( $byRole )
+      
+      #foreach($customSet in $customSetMap.entrySet())
+         #AddCategoryRow( $customSet.value "Reports" $reportPermissionTypes false )
+         #ReportPermissionsByAccessor( $byRole $projectContextId $customSet.key $reportPermKey $reportPermissionTypes false false ) 
+      #end  
+      #AddCategoryRow( "" "Reports" $reportPermissionTypes false )
+      #ReportPermissionsByAccessor( $byRole $projectContextId "" $reportPermKey $reportPermissionTypes false false )
+      
+   #end
+   
+   #macro ( ReportBuildPermissions $byRole $projectContextId )
+      #GetCustomSets($gPermissionsFilePath "Build_" )
+      #GetCustomSets($prjPermissionsFilePath "Build_" )
+      
+      #displayBuildPermissionsHeader( $byRole )
+      
+      #foreach($customSet in $customSetMap.entrySet())
+         #AddCategoryRow( $customSet.value "Builds" $buildPermissionTypes false )
+         #ReportPermissionsByAccessor( $byRole $projectContextId $customSet.key $buildPermKey $buildPermissionTypes false false ) 
+      #end  
+      #AddCategoryRow( "" "Builds" $buildPermissionTypes false )
+      #ReportPermissionsByAccessor( $byRole $projectContextId "" $buildPermKey $buildPermissionTypes false false )
+      
+   #end
+   
+   #macro ( ReportPlanPermissions $byRole $projectContextId )
+      #GetCustomSets($gPermissionsFilePath "Plan_" )
+      #GetCustomSets($prjPermissionsFilePath "Plan_" )
+      
+      #displayPlanPermissionsHeader( $byRole )
+      
+      #foreach($customSet in $customSetMap.entrySet())
+         #AddCategoryRow( $customSet.value "Plans" $planPermissionTypes false )
+         #ReportPermissionsByAccessor( $byRole $projectContextId $customSet.key $planPermKey $planPermissionTypes false false ) 
+      #end  
+      #AddCategoryRow( "" "Plans" $planPermissionTypes false )
+      #ReportPermissionsByAccessor( $byRole $projectContextId "" $planPermKey $planPermissionTypes false false )
+      
+   #end
+   
+   #macro( ReportRichPagePermissions $byRole $projectContextId )
+      #GetCustomSets($gPermissionsFilePath "RichPage_" )
+      #GetCustomSets($prjPermissionsFilePath "RichPage_" )
+      
+      #displayPlanPermissionsHeader( $byRole )
+      
+      #foreach($customSet in $customSetMap.entrySet())
+         #AddCategoryRow( $customSet.value "Rich Pages" $planPermissionTypes false )
+         #ReportPermissionsByAccessor( $byRole $projectContextId $customSet.key $richpagePermKey $planPermissionTypes  false false ) 
+      #end  
+      #AddCategoryRow( "" "Rich Pages" $planPermissionTypes false )
+      #ReportPermissionsByAccessor( $byRole $projectContextId "" $richpagePermKey $planPermissionTypes false false )      
+   
+   #end
+   
+   #macro( ReportWikiPagePermissions $byRole $projectContextId )
+      #GetCustomSets($gPermissionsFilePath "WikiPage_" )
+      #GetCustomSets($prjPermissionsFilePath "WikiPage_" )
+      
+      #displayPlanPermissionsHeader( $byRole )
+      
+      #foreach($customSet in $customSetMap.entrySet())
+         #AddCategoryRow( $customSet.value "Wiki Pages" $planPermissionTypes false )
+         #ReportPermissionsByAccessor( $byRole $projectContextId $customSet.key $wikipagePermKey $planPermissionTypes false false ) 
+      #end  
+      #AddCategoryRow( "" "Wiki Pages" $planPermissionTypes false )
+      #ReportPermissionsByAccessor( $byRole $projectContextId "" $wikipagePermKey $planPermissionTypes false false )      
+   
+   #end
+   
+   #macro( ReportDocumentPermissions $byRole $projectContextId )
+      #GetCustomSets($gPermissionsFilePath "Module_" )
+      #GetCustomSets($prjPermissionsFilePath "Module_" )
+      
+      #displayModulePermissionsHeader( $byRole )
+      
+      #foreach($customSet in $customSetMap.entrySet())
+         #AddCategoryRow( $customSet.value "Documents" $modulePermissionTypes $objectCommentPermissionTypes )
+         #ReportPermissionsByAccessor( $byRole $projectContextId $customSet.key $modulePermKey $modulePermissionTypes $moduleCommentPermKey $objectCommentPermissionTypes ) 
+      #end  
+      #AddCategoryRow( "" "Documents" $modulePermissionTypes $objectCommentPermissionTypes )
+      #ReportPermissionsByAccessor( $byRole $projectContextId "" $modulePermKey $modulePermissionTypes $moduleCommentPermKey $objectCommentPermissionTypes )      
+   
+   #end
+   
+   #macro ( ReportWorkItemPermissions $byRole $projectContextId )
+      #GetCustomSets($gPermissionsFilePath "WorkItem_" )
+      #GetCustomSets($prjPermissionsFilePath "WorkItem_" )
+      #displayWorkItemPermissionsHeader( false )
+      
+      #foreach($customSet in $customSetMap.entrySet())
+         #AddCategoryRow( $customSet.value "WorkItems" $workItemPermissionTypes $objectCommentPermissionTypes )
+         #ReportPermissionsByAccessor( $byRole $projectContextId $customSet.key $workItemPermKey $workItemPermissionTypes $objectCommentPermKey $objectCommentPermissionTypes)
+      #end  
+      
+      #AddCategoryRow( "" "WorkItems" $workItemPermissionTypes $objectCommentPermissionTypes )
+      #ReportPermissionsByAccessor( $byRole $projectContextId "" $workItemPermKey $workItemPermissionTypes $objectCommentPermKey $objectCommentPermissionTypes )
+      
+   #end
+   
+   ## For each artifact type, display permissions for each user
+   #macro(displayWorkItemPermissionsHeader $byRole )    
+           <thead>
+                ## <tr class="polarion-rpw-table-header-row">
+                <tr class="th.row-header" >
+                    <th class="column criterion hr"><div><span>Data Condition</span></div></th> 
+                    
+                    <th class="column criterion hr"><div><span> #if($byRole) Role #else User #end </span></div></th> 
+            
+                    <th class="column criterion rotate-45"><div><span>READ</span></div></th> 
+                    <th class="column criterion rotate-45"><div><span>CREATE NEW</span></div></th> 
+                    <th class="column criterion rotate-45"><div><span>MODIFY</span></div></th>                  
+                    ## <th class="rotate"><div><span>DELETE</span></div></th>
+                    <th class="column criterion rotate-45"><div><span>VOTE</span></div></th> 
+                    <th class="column criterion rotate-45"><div><span>WATCH</span></div></th> 
+                    <th class="column criterion rotate-45"><div><span>DELETE</span></div></th> 
+                    <th class="column criterion rotate-45"><div><span>APPROVE/DISAPPROVE</span></div></th> 
+
+                    <th class="column criterion rotate-45"><div><span>APPROVE/DISAPPROVE as ANOTHER USER</span></div></th> 
+                    <th class="column criterion rotate-45"><div><span>RESET APPROVALS</span></div></th> 
+                    <th class="column criterion rotate-45"><div><span>COMMENT</span></div></th> 
+                    <th class="column criterion rotate-45"><div><span>RESOLVE COMMENTS</span></div></th>                
+                </tr>    
+          </thead>   
+   
+   #end
+   
+   #macro ( displayBuildPermissionsHeader $byRole )
+   <thead>
+                ## <tr class="polarion-rpw-table-header-row">
+                <tr class="th.row-header" >
+                    <th class="column criterion hr"><div><span>Data Condition</span></div></th> 
+                    
+                    <th class="column criterion hr"><div><span> #if($byRole) Role #else User #end </span></div></th> 
+            
+                    <th class="column criterion rotate-45"><div><span>READ</span></div></th> 
+                    <th class="column criterion rotate-45"><div><span>TRIGGER</span></div></th> 
+                    <th class="column criterion rotate-45"><div><span>DOWNLOAD</span></div></th>                    
+                                    
+                </tr>    
+          </thead>   
+   
+   #end
+   
+   #macro(displayReportPermissionsHeader $byRole )
+   <thead>
+                ## <tr class="polarion-rpw-table-header-row">
+                <tr class="th.row-header" >
+                    <th class="column criterion hr"><div><span>Data Condition</span></div></th> 
+                    
+                    <th class="column criterion hr"><div><span> #if($byRole) Role #else User #end </span></div></th> 
+            
+                    <th class="column criterion rotate-45"><div><span>READ</span></div></th> 
+                    <th class="column criterion rotate-45"><div><span>UPDATE</span></div></th> 
+                    <th class="column criterion rotate-45"><div><span>CREATE WORK REPORTS</span></div></th>                 
+                                    
+                </tr>    
+          </thead>   
+   
+   #end
+   
+   #macro ( displayTestRunPermissionsHeader $byRole )
+        <thead>
+            ## <tr class="polarion-rpw-table-header-row">
+            <tr class="th.row-header" >
+                <th class="column criterion hr"><div><span>Data Condition</span></div></th> 
+                
+                <th class="column criterion hr"><div><span> #if($byRole) Role #else User #end </span></div></th> 
+        
+                <th class="column criterion rotate-45"><div><span>READ</span></div></th> 
+                <th class="column criterion rotate-45"><div><span>CREATE NEW</span></div></th> 
+                <th class="column criterion rotate-45"><div><span>MODIFY</span></div></th>
+                <th class="column criterion rotate-45"><div><span>DELETE</span></div></th>
+                <th class="column criterion rotate-45"><div><span>EXECUTE</span></div></th>
+                <th class="column criterion rotate-45"><div><span>DEFINE TEST PARAMETERS</span></div></th>
+                <th class="column criterion rotate-45"><div><span>ADD TO PARAMETER LIBRARY</span></div></th>
+                <th class="column criterion rotate-45"><div><span>COMMENT</span></div></th> 
+                <th class="column criterion rotate-45"><div><span>RESOLVE COMMENTS</span></div></th>                   
+                                
+            </tr>    
+        </thead>      
+   #end
+   #macro ( displayModulePermissionsHeader $byRole )
+      <thead>
+            ##<tr class="polarion-rpw-table-header-row">
+             <tr class="th.row-header" >
+                <th class="column criterion hr"><div><span>Data Condition</span></div></th>                     
+                <th class="column criterion hr"><div><span> #if($byRole) Role #else User #end </span></div></th> 
+                <th class="column criterion rotate-45"><div><span>READ</span></div></th> 
+                <th class="column criterion rotate-45"><div><span>CREATE NEW</span></div></th> 
+                <th class="column criterion rotate-45"><div><span>MODIFY FIELDS</span></div></th> 
+                <th class="column criterion rotate-45"><div><span>MODIFY CONTENT</span></div></th>                  
+                ## <th class="rotate"><div><span>DELETE</span></div></th>
+                <th class="column criterion rotate-45"><div><span>MANAGE</span></div></th>                  
+                <th class="column criterion rotate-45"><div><span>DELETE</span></div></th> 
+                <th class="column criterion rotate-45"><div><span>SIGN/DECLINE</span></div></th> 
+            ##  <th class="rotate"><div><span>PPROVE/DISAPPROVE as ANOTHER USER</span></div></th>
+                <th class="column criterion rotate-45"><div><span>MANAGE SIGNATURES</span></div></th> 
+                <th class="column criterion rotate-45"><div><span>COMMENT</span></div></th> 
+                <th class="column criterion rotate-45"><div><span>RESOLVE COMMENTS</span></div></th>                
+            </tr>    
+      </thead> 
+   
+   #end
+
+   #macro ( displayPlanPermissionsHeader $byRole )
+       <thead>
+            <tr class="polarion-rpw-table-header-row">
+                <th class="column criterion hr"><div><span>Data Condition</span></div></th>                     
+                <th class="column criterion hr"><div><span> #if($byRole) Role #else User #end </span></div></th>    
+                <th class="column criterion rotate-45"><div><span>READ</span></div></th> 
+                <th class="column criterion rotate-45"><div><span>CREATE NEW</span></div></th> 
+                <th class="column criterion rotate-45"><div><span>MODIFY</span></div></th>                   
+                <th class="column criterion rotate-45"><div><span>DELETE</span></div></th>                              
+            </tr>    
+          </thead>   
+   #end
+   
+    #macro ( AddCategoryRow $customSetTitle $typeHeader $permissionTypes $commentPermissionTypes )
+        ## <tr class="polarion-rpw-table-content-row">  
+        <tr class="th.row-header" >
+        <td class="column criterion hd"><div><span>  
+          #if(!$customSetTitle.equals("")) 
+               $customSetTitle 
+          #else
+              #if($customSetMap.size() > 0 ) 
+                  Other $typeHeader
+              #else
+                  $typeHeader
+              #end
+          #end 
+        </span></div></td>
+        <td class="column criterion hd"><div><span></span></div></td>
+        #foreach($index in $permissionTypes )
+           <td class="column criterion hd"><div><span></span></div></td>
+        #end 
+        #foreach($index in $commentPermissionTypes )
+           <td class="column criterion hd"><div><span></span></div></td>
+        #end 
+        </tr>
+    #end
+
+
+    #macro ( ReportPermissionsByAccessor $byRole $projectContextId $customSetId $permissionKey $permissionTypes $commentPermissionKey $commentPermissionTypes )
+      
+      #set($accessors = [] )
+      #if(!$byRole) 
+         #set($accessors = $projectUsers )
+      #else
+         #set($accessors = $projectRoles )
+      #end
+      
+      #foreach( $accessor in $accessors )
+      
+      <tr class="th.row-header" >
+          <td> </td>    
+          #if(!$byRole)   
+             <td> $transaction.users().getBy().id($accessor.id).render().withLinks() </td>
+          #else
+             <td> $accessor </td>
+          #end
+          
+          #foreach($pType in $permissionTypes )
+             #if(!$customSetTitle.equals(""))
+                 #set($permissionType = "${permissionKey}.${pType}" )
+             #else
+                 #set($permissionType = "${permissionKey} ( ${customSetId} ).${pType}" )
+             #end
+             
+             #set($permission = $securityService.constructPermission($permissionType))
+             #if(!$byRole)
+                 #set($hasPermission = $securityService.hasPermission($accessor.id, $permission, $projectContextId ))
+             #else
+                 #set($roleCollection = [] )
+                 #set($void = $roleCollection.add($accessor) )
+                 #set($hasPermission = $securityService.hasPermission($roleCollection, $permission, $projectContextId ))
+             #end
+             
+             #if($hasPermission) <td bgcolor="lightgreen">Y</td> #else <td bgcolor="orange">N #end </td>
+          #end   
+          
+          #if($commentPermissionTypes)
+              #foreach( $commentPType in $commentPermissionTypes )
+                 #set($cmtPermissionType = "${commentPermissionKey} ( ${customSetId} ).${commentPType}" )
+                 
+                 #set($cmtPermission = $securityService.constructPermission($cmtPermissionType))
+                 #if(!$byRole) 
+                    #set($hasPermission = $securityService.hasPermission($accessor.id, $cmtPermission, $projectContextId ))
+                 #else
+                    #set($roleCollection = [] )
+                    #set($void = $roleCollection.add($accessor) )
+                    #set($hasPermission = $securityService.hasPermission($roleCollection, $cmtPermission, $projectContextId ))
+                 #end
+                 
+                 #if($hasPermission) <td bgcolor="lightgreen">Y</td> #else <td bgcolor="orange">N #end </td>
+              #end
+          #end
+       </tr>
+       #end
+    #end
+
+    #macro(DisplayTypeConfiguration $allSelectedSubTypes $prototypeModel )
+        #foreach($wiType in $allSelectedSubTypes )  
+            <h2>Type: 
+            #if($prototypeModel == "WorkItem") 
+                <u>$wiType.name</u> 
+            #else
+                <u>$wiType.label()</u>
+            #end
+            </h2>         
+            $!wiType.getProperty("description") 
+            #set($wfGraphData = "")
+            #set($linkRoleData = "")
+
+            #set($wiTypeId = $wiType.id)
+                          
+            #if($SelectedDisplayDetails.contains("allOOTBfields") )
+                <h3> <b>OOTB Fields </b></h3>
+                #DisplayOOTBFields($wiTypeId $prototypeModel)
+            #end
+           
+            #if($SelectedDisplayDetails.contains("customFields") )
+                <h3> Custom Fields </h3>
+                #DisplayCustomFields($wiTypeId $prototypeModel ) 
+            #end
+            
+            #if($SelectedDisplayDetails.contains("workflow") )
+                <h3> Workflow Details </h/>
+                #GetStatusDetails( $wiTypeId  $wfGraphData  $prototypeModel)                    
+                #set($void = $type2GraphMap.put($wiTypeId, $wfGraphData ) )
+            #end
+             
+            #if($prototypeModel == "WorkItem")
+                #if($SelectedDisplayDetails.contains("linkedRoles") )                   
+                    <h3> Link Role Details </h3>
+                    #set($linkRoleGrpahId = "links${wiTypeId}")             
+                    #GetlinkRoleDetails( $wiTypeId $allWiTypes $linkRoleGrpahId $prototypeModel)                        
+                #end 
+            #end
+            
+            #set($void = $type2GraphMap.put($linkRoleGrpahId, $linkRoleGrpahId ) )  
+        
+            #if($SelectedDisplayDetails.contains("enumerations") )
+                <h3> Enumerations </h3>  
+                
+                #DisplayOOTBFieldEnums($wiTypeId  $prototypeModel )
+                #foreach($dEnum in $enumsToReport)           
+                    <h4> <b>Enumeration: $dEnum    </b></h4>      
+                    #set($inx = 0 )
+                    #foreach($k in $dEnum.split(":"))
+                        #if($inx == 0 )
+                            #set($type = $k )
+                        #elseif($inx == 1 )
+                            #set($key = $k )
+                        #else
+                            #set($proto = $k )
+                        #end
+                        #set($inx = $inx + 1 )
+                    #end
+                    #renderEnumById($proto $type  $key )
+                #end
+           
+                #DisplayCustomFieldEnums($wiTypeId  $prototypeModel)
+                
+                #if ($customEnumsToReport.size() == 0)                
+                    #foreach($cEnum in $customEnumsToReport )   
+                        <h4> Enumeration: $cEnum.getEnumerationId() </h4>   
+                  
+                        #set($inx = 0 )
+                        #foreach($k in $dEnum.split(":"))
+                            #if($inx == 0 )
+                                #set($type = $k )
+                            #elseif($inx == 1 )
+                                #set($key = $k )
+                            #else
+                                #set($proto = $k )
+                            #end
+                            #set($inx = $inx + 1 )
+                        #end
+                        #renderEnumByType($cEnum )
+                    #end
+                #end 
+            #end 
+        
+        #end
+    
+    #end
+
+
+    #macro ( ReportPermissions $projId $objectType $byRole )
+    
+       ## Get global custom sets    
+       #set($inProject = $projectService.getProject($projId))
+       
+       ## Get Project sepecific custom sets   
+       #set($projLocation = $inProject.getLocation())
+       #set($projectContextId = $inProject.getContextId())
+       #set($trackerLoc = $polarionTool.location.getLocation(".polarion/security/permissions.xml"))
+       #set($location = $projLocation.append($trackerLoc))
+       #set($prjPermissionsFilePath = $location.getLocationPath())   
+       
+       #set($projectUsers = $projectService.getProjectUsers($inProject))
+       #set($projectRoles = $securityService.getContextRoles($projectContextId))
+       
+       
+       <table class="table table-header-rotated">
+       #if($objectType.equals("Workitem"))      
+          #ReportWorkItemPermissions( $byRole $projectContextId )
+       #elseif ($objectType.equals("Document"))      
+          #ReportDocumentPermissions( $byRole $projectContextId )     
+       #elseif ($objectType.equals("Plan"))
+          #ReportPlanPermissions( $byRole $projectContextId )
+       #elseif ($objectType.equals("Testrun"))      
+          #ReportTestRunPermissions( $byRole $projectContextId )      
+       #elseif ($objectType.equals("Build"))
+          #ReportBuildPermissions( $byRole $projectContextId )    
+       #elseif ($objectType.equals("Baseline"))
+          #ReportBaselinePermissions( $byRole $projectContextId )     
+       #elseif ($objectType.equals("Report"))
+          #ReportReportPermissions( $byRole $projectContextId )   
+       #elseif ($objectType.equals("Wikipage"))
+          #ReportWikiPagePermissions( $byRole $projectContextId )     
+       #elseif ($objectType.equals("Richpage"))
+          #ReportRichPagePermissions( $byRole $projectContextId )
+       #end
+       
+       </table>
+
+    #end
+     
+    ## ========================================================================
+    ## PERMISSIONS REPORT MACROS END    ##
+    ## ========================================================================
+   
+    #set($dataService = $trackerService.getDataService())
+    #set($currentProjId = $page.reference.projectId )
+    #set($projectService = $trackerService.getProjectsService())
+    #set($currentProject = $trackerService.getTrackerProject($currentProjId))
+    
+    ## Load resources
+    #loadWidgetJsResource("resources/jquery.min.js")
+    #loadWidgetJsResource("resources/vis.min.js")
+    #loadWidgetCssResource("resources/vis-network.min.css")
+    
+    #set($contextId = $currentProject.getContextId())
+    #set($wfGraphDataArray = []) 
+    
+    ##get the list of all subtypes
+    
+    #set($allWiTypes = [] )
+    #set($allDocTypes = [] )
+    #set($allTestrunTypes = [] )
+    
+    ##For workitem subtypes
+    #set($wiTypeEnum = $currentProject.getWorkItemTypeEnum())  
+    #set($allWiTypes = $wiTypeEnum.getAvailableOptions($wiTypeEnum.getControlKey()))
+    
+    ##For document subtypes
+    #GetEnumOptions("documents/document-type" $allDocTypes )
+       
+    ##For testrun subtypes
+    #GetEnumOptions("testing/testrun-type" $allTestrunTypes )      
+    
+    ## Get all selected subtypes for prototypes
+    #set($allSelectedSubTypes = [] )    
+    
+    #if ($selectedWiTypes.size()  > 0 )
+        <h2  class ="center-align"> Configuration Report for WorkItems </h2>
+        #set($prototypeModel = "WorkItem" )
+        #foreach( $witype in $selectedWiTypes)
+            #foreach($type in $allWiTypes)
+                #if($type.id == $witype.id)
+                    #set($void = $allSelectedSubTypes.add($type))
+                #end
+            #end            
+        #end
+        #DisplayTypeConfiguration( $allSelectedSubTypes "WorkItem" )
+    #end
+    
+    #set($allSelectedSubTypes = [] )
+    #if ($selectedDocTypes.size()  > 0 )
+        <h2  class ="center-align"> Configuration Report for Documents </h2>
+        #set($prototypeModel = "Module" )
+        #foreach( $doctype in $selectedDocTypes)
+            #foreach($type in $allDocTypes)
+                #if($type.id == $doctype.id)
+                    #set($void = $allSelectedSubTypes.add($type))
+                #end
+            #end            
+        #end
+        
+        #DisplayTypeConfiguration( $allSelectedSubTypes "Module" )
+    #end
+    
+    #set($allSelectedSubTypes = [] )
+    #if ($selectedTestrunTypes.size()  > 0 )
+        <h2  class ="center-align"> Configuration Report for TestRuns </h2>
+        #set($prototypeModel = "TestRun" )
+        #foreach( $trtype in $selectedTestrunTypes)
+            #foreach($type in $allTestrunTypes)
+                #if($type.id == $trtype.id )
+                    #set($void = $allSelectedSubTypes.add($type))
+                #end
+            #end            
+        #end
+        
+        #DisplayTypeConfiguration( $allSelectedSubTypes  "TestRun" )
+    #end
+    
+    
+   
+    
+   
+    <script type="text/javascript">
+
+    function convertToImage(div, dd, showImages){
+        if(showImages === true){
+        
+          console.log("convertToImage started for " + div.id);
+          var childDiv = div.childNodes[0];
+          var canvas = childDiv.childNodes[0];
+          console.log(div.id);
+          var imgdata = canvas.toDataURL("image/png");
+          
+          //var img = document.getElementById(div.id + "_img");
+          
+          var img = document.createElement("img");
+          img.src = imgdata;
+          
+          //console.log("imgdata: " + imgdata);
+          //div.appendChild(img);
+          
+          var parent = dd.parentNode;
+          parent.insertBefore(img, dd);
+          
+          div.style = "display: none;";          
+       }
+    }
+    
+    function drawGraph(elem, nodes, edges, displayImage ) {
+    var graphDiv = elem; // '${elem}';
+    
+    // console.log('Inside drawGraph ' + elem );
+    
+    var network = null;
+    var data = null;
+    // console.log("___________________"+ graphDiv +"________________________");
+    // console.log("nodes = " + nodes);
+    // console.log("edges = "+ edges);
+    // console.log("______________________________________________");
+     nodes = JSON.parse(nodes);
+     edges = JSON.parse(edges);   
+     var data = {
+                nodes: nodes,
+                edges: edges
+            };
+
+      // create a network
+      var container = document.getElementById(graphDiv);
+      var options = {
+        randomSeed: 2,
+        improvedLayout:true,
+        autoResize: true,
+        locale: 'en',
+        nodes:{
+            shape:'box'
+        },
+        edges:{
+            "smooth": {
+              "forceDirection": "none"
+            },
+            arrows: {
+              to:     {enabled: true, scaleFactor:1, type:'arrow'},
+              middle: {enabled: false, scaleFactor:1, type:'arrow'},
+              from:   {enabled: false, scaleFactor:1, type:'arrow'}
+            },
+            arrowStrikethrough: false,
+            chosen: true,
+            color: {
+              color:'#848484',
+              highlight:'#ed6e1a',
+              hover: '#59a1ff',
+              inherit: 'from',
+              opacity:1.0
+            },
+            dashes: false,
+            font: {
+              color: '#343434',
+              size: 12, // px
+              face: 'arial',
+              background: 'none',
+              strokeWidth: 2, // px
+              strokeColor: '#ffffff',
+              align: 'horizontal',
+              multi: false,
+              vadjust: 0,
+              bold: {
+                color: '#343434',
+                size: 14, // px
+                face: 'arial',
+                vadjust: 0,
+                mod: 'bold'
+              },
+              ital: {
+                color: '#343434',
+                size: 14, // px
+                face: 'arial',
+                vadjust: 0,
+                mod: 'italic',
+              },
+              boldital: {
+                color: '#343434',
+                size: 14, // px
+                face: 'arial',
+                vadjust: 0,
+                mod: 'bold italic'
+              },
+              mono: {
+                color: '#343434',
+                size: 15, // px
+                face: 'courier new',
+                vadjust: 2,
+                mod: ''
+              }
+            },
+            hidden: false,
+            hoverWidth: 1.5,
+            label: undefined,
+            labelHighlightBold: true,
+            length: 300,
+            physics: true,
+            scaling:{
+              min: 1,
+              max: 15,
+              label: {
+                enabled: true,
+                min: 14,
+                max: 30,
+                maxVisible: 30,
+                drawThreshold: 5
+              },
+              customScalingFunction: function (min,max,total,value) {
+                if (max === min) {
+                  return 0.5;
+                }
+                else {
+                  var scale = 1 / (max - min);
+                  return Math.max(0,(value - min)*scale);
+                }
+              }
+            }
+        },
+        interaction:{
+            hover: true
+        },
+        "physics": {
+            "stabilization": {
+                enabled:true,
+                iterations:2000,
+                updateInterval:25
+             },
+            "forceAtlas2Based": {
+            "springLength": 100
+            },
+            "minVelocity": 0.75,
+            "solver": "forceAtlas2Based"
+        }
+      };
+      network = new vis.Network(container, data, options);
+     //network.fit();
+      //network.on("click", function (params) {
+        //params.event = "[original event]";
+        //document.getElementById('eventSpan').innerHTML = '<h2>Click event:</h2>' + JSON.stringify(params, null, 4);
+        //console.log('click event, getNodeAt returns: ' + this.getNodeAt(params.pointer.DOM));
+      //});
+    console.log("drawWorkflow done for " + elem);
+    
+    network.on("stabilized", function myfunc() {
+            convertToImage(container, document.getElementById(elem), displayImage);
+            console.log("stabilized!");
+        });
+    }
+</script> 
+     
+    #foreach($elem in $type2GraphMap.keySet() )   
+
+    <script type="text/javascript">
+        var typeStr = ${elem};
+        var useImage = ${displayImage};
+        var nodes = _nodes${elem};
+        var edges = _edges${elem};
+        // console.log(typeStr.id);
+        drawGraph(typeStr.id, nodes, edges, useImage); 
+
+    </script>
+
+    #end
+    
+
+    <br>
+    <br>
+    #if($displayAccessReport)       
+        <h2  class ="center-align"> Permissions Report </h2>
+        #set($objType = ["Workitem","Document","Plan","Richpage","Wikipage","Testrun", "Report","Baseline","Build"]) 
+        #foreach($type in $objType) 
+            #if($reportType.equals("User") || $reportType.equals("Both"))
+			    <br>
+                <h3> $type Permissions  By User  </h3>                              
+                #ReportPermissions( $currProjectId $type false )   
+            #end            
+        #end 
+
+        #foreach($type in $objType) 
+            #if($reportType.equals("Role") || $reportType.equals("Both"))
+			    <br>
+                <h3> $type Permissions  By Role  </h3>                  
+                #ReportPermissions( $currProjectId $type true ) 
+            #end  
+        #end        
+    #end        
+ 
+</body>
